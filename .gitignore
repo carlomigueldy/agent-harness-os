@@ -1,0 +1,75 @@
+# ── Secrets & environment ─────────────────────────────────────────────
+# Never commit secrets. Copy .env.example -> .env locally; keep .env ignored.
+.env
+.env.*
+!.env.example
+*.env
+*.local
+secrets.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+*.keystore
+.npmrc
+.netrc
+service-account*.json
+gha-creds-*.json
+
+# ── Dependencies ──────────────────────────────────────────────────────
+node_modules/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/versions
+vendor/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+target/            # Rust / JVM build output
+
+# ── Build & cache output ──────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.nuxt/
+.svelte-kit/
+.turbo/
+.cache/
+coverage/
+*.tsbuildinfo
+
+# ── Logs & runtime ────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+/logs/                 # root-level runtime log dir only
+!.agents/logs/         # harness logs are tracked state — never ignore them
+
+# ── Editor & OS ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# ── Harness artifacts ─────────────────────────────────────────────────
+# Keep the artifacts directory tracked (README + .gitkeep), but ignore
+# large captured media by default. Commit small evidence intentionally.
+.agents/artifacts/**
+!.agents/artifacts/README.md
+!.agents/artifacts/.gitkeep
+
+# ── Git worktrees (created as sibling dirs by convention) ──────────────
+# Worktrees live in ../<repo>-worktrees/<branch>, outside this tree.

@@ -1,0 +1,101 @@
+name: "Bug Report"
+description: "Report a reproducible defect or unexpected behavior."
+title: "[Bug] "
+labels: ["type: bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug. Please fill in as much detail as possible so it can be reproduced and fixed efficiently.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: "Summary"
+      description: "One-sentence description of the bug."
+      placeholder: "Describe what is broken."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: "Steps to Reproduce"
+      description: "Exact steps to reproduce the bug reliably."
+      placeholder: |
+        1. Start the app with `{{DEV_CMD}}`
+        2. Navigate to ...
+        3. Click / call / run ...
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected Behavior"
+      description: "What should happen?"
+      placeholder: "The app should ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: "Actual Behavior"
+      description: "What actually happens? Include error messages, stack traces, and console output."
+      placeholder: |
+        Error: ...
+        Stack trace: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: "Environment"
+      description: "Provide the environment details where the bug occurs."
+      placeholder: |
+        - OS:
+        - Runtime version (e.g., Node 20.x, Python 3.12):
+        - {{PACKAGE_MANAGER}} version:
+        - Branch / commit:
+        - Relevant env vars (no secret values):
+        - Other context:
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: "Severity"
+      description: "How severe is this bug?"
+      options:
+        - "Critical — data loss, security issue, or production down"
+        - "High — major feature broken, no workaround"
+        - "Medium — feature degraded, workaround exists"
+        - "Low — minor visual or non-blocking issue"
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification_of_fix
+    attributes:
+      label: "Verification of Fix"
+      description: "What must be true after the fix is applied to confirm the bug is resolved? Include specific commands or steps."
+      placeholder: |
+        - Run: `{{TEST_CMD}}`
+        - Manually verify: ...
+        - Expected output after fix: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots_evidence
+    attributes:
+      label: "Screenshots / Evidence"
+      description: "Attach screenshots, GIFs, videos, log output, or other evidence of the bug."
+      placeholder: |
+        <!-- Drag and drop files here, or paste log output below -->
+    validations:
+      required: false

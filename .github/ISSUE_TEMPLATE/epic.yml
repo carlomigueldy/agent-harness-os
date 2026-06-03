@@ -1,0 +1,207 @@
+name: "Epic"
+description: "Track a large body of work spanning multiple sub-issues."
+title: "[Epic] "
+labels: ["type: epic"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to define an epic — a significant goal that is broken into multiple sub-issues.
+        Fill in all required sections before assigning or starting work.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: "Summary"
+      description: "One-paragraph description of what this epic accomplishes."
+      placeholder: "Describe the epic goal clearly and concisely."
+    validations:
+      required: true
+
+  - type: textarea
+    id: goals
+    attributes:
+      label: "Goals"
+      description: "Specific, measurable outcomes this epic must achieve."
+      placeholder: |
+        - Goal 1
+        - Goal 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: "Non-goals"
+      description: "What is explicitly out of scope for this epic."
+      placeholder: |
+        - Not in scope: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: user_value
+    attributes:
+      label: "User Value"
+      description: "What does a user gain when this epic is complete? Why does it matter?"
+      placeholder: "As a user, I can now ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: "Scope"
+      description: "Which parts of the codebase, services, or systems are touched?"
+      placeholder: |
+        - Module / service A
+        - Module / service B
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: "Acceptance Criteria"
+      description: "The exact, verifiable conditions that must be true for this epic to be considered done."
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: sub_issues
+    attributes:
+      label: "Sub-issues"
+      description: "List the GitHub sub-issues that compose this epic (link them with #<number>)."
+      placeholder: |
+        - [ ] #1 — Task title
+        - [ ] #2 — Task title
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: "Dependencies"
+      description: "Other epics, issues, external systems, or decisions this epic depends on."
+      placeholder: |
+        - Depends on #<number> — reason
+        - Depends on external: ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: blockers
+    attributes:
+      label: "Blockers"
+      description: "Active blockers preventing progress on this epic."
+      placeholder: |
+        - Blocker: ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: parallel_work
+    attributes:
+      label: "Parallel Work Opportunities"
+      description: "Which sub-issues can be worked on simultaneously without conflict?"
+      placeholder: |
+        - #1 and #2 are parallel-safe (separate modules, no shared files)
+    validations:
+      required: false
+
+  - type: textarea
+    id: sequential_constraints
+    attributes:
+      label: "Sequential Constraints"
+      description: "Which sub-issues must be completed in a strict order? Why?"
+      placeholder: |
+        - #3 must complete before #4 (database migration required first)
+    validations:
+      required: false
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: "Risks"
+      description: "Technical, product, or coordination risks that could affect this epic."
+      placeholder: |
+        - Risk: ... | Mitigation: ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: verification_plan
+    attributes:
+      label: "Verification Plan"
+      description: "How will completion of this epic be verified end-to-end?"
+      placeholder: |
+        - Run: `{{TEST_CMD}}`
+        - Run: `{{BUILD_CMD}}`
+        - Manual check: ...
+        - Demo: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: demo_requirements
+    attributes:
+      label: "Demo Requirements"
+      description: "What evidence must be captured to demonstrate this epic is complete? (screenshot, GIF, CLI output, etc.)"
+      placeholder: |
+        - Screenshot of ...
+        - GIF of user flow ...
+        - CLI output showing ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: worktree_notes
+    attributes:
+      label: "Worktree Notes"
+      description: "Branch naming, worktree path, and env-file handling guidance for this epic."
+      placeholder: |
+        - Branch: feat/<short-description>
+        - Worktree: ../<repo>-worktrees/feat/<short-description>
+        - Env files: copy from default branch worktree; never stage
+    validations:
+      required: false
+
+  - type: textarea
+    id: orchestration_notes
+    attributes:
+      label: "Agent-Team / Dynamic-Workflow Notes"
+      description: "If this epic requires multi-agent orchestration, describe the approach. Which roles are needed? Is a dynamic workflow more appropriate than an agent team?"
+      placeholder: |
+        - Orchestration mode: single agent / subagents / agent team / dynamic workflow
+        - Roles: Lead, Builder, Tester, Reviewer
+        - Dynamic workflow: N/A or describe trigger and worker strategy
+    validations:
+      required: false
+
+  - type: dropdown
+    id: reviewer_score_required
+    attributes:
+      label: "Reviewer Scoring Required?"
+      description: "Does this epic require a formal reviewer score (1–10) and PASS / REVISE / BLOCK verdict before closing?"
+      options:
+        - "Yes — reviewer score 10/10 + PASS required"
+        - "Yes — reviewer score required, threshold TBD"
+        - "No — standard verification sufficient"
+    validations:
+      required: true
+
+  - type: textarea
+    id: release_notes
+    attributes:
+      label: "Release Notes"
+      description: "Draft release note entry for what users will see when this epic ships."
+      placeholder: |
+        **{{PROJECT_NAME}} vX.Y.Z**
+        - Added: ...
+        - Changed: ...
+        - Fixed: ...
+    validations:
+      required: false

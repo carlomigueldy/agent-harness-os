@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: "Agent Harness Docs"
+    url: https://github.com/{{GITHUB_OWNER}}/{{REPO_NAME}}/blob/{{DEFAULT_BRANCH}}/.agents/README.md
+    about: "Read the harness index to understand how this project is organized and how agents operate in it."
+  - name: "AGENTS.md — Project Overview & Rules"
+    url: https://github.com/{{GITHUB_OWNER}}/{{REPO_NAME}}/blob/{{DEFAULT_BRANCH}}/AGENTS.md
+    about: "Start here for project overview, hard constraints, verification commands, and workflow links."

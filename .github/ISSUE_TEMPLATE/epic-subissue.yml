@@ -1,0 +1,153 @@
+name: "Epic Sub-issue"
+description: "A scoped task that belongs to a parent epic."
+title: "[Task] "
+labels: ["type: task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to create a sub-issue under a parent epic.
+        Link the parent epic below and fill in all required fields before starting work.
+
+  - type: input
+    id: parent_epic
+    attributes:
+      label: "Parent Epic"
+      description: "Link to the parent epic issue (e.g., #42)."
+      placeholder: "#<epic-issue-number>"
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: "Summary"
+      description: "What does this sub-issue implement, fix, or improve?"
+      placeholder: "Concise description of the task."
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: "Scope"
+      description: "Which files, modules, or services are in scope? What is explicitly out of scope?"
+      placeholder: |
+        In scope:
+        - src/module/...
+
+        Out of scope:
+        - Anything in src/other/...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: "Acceptance Criteria"
+      description: "Exact, verifiable conditions that must be true for this sub-issue to be closed."
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: "Dependencies"
+      description: "Other issues, sub-issues, or external items this task depends on."
+      placeholder: |
+        - Depends on #<number> — reason
+    validations:
+      required: false
+
+  - type: textarea
+    id: blockers
+    attributes:
+      label: "Blockers"
+      description: "Active blockers preventing progress on this sub-issue."
+      placeholder: |
+        - Blocker: ...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: parallel_safe
+    attributes:
+      label: "Parallel-safe?"
+      description: "Can this sub-issue be worked on simultaneously with other open sub-issues without file conflicts?"
+      options:
+        - "Yes — parallel-safe (separate files/module, no shared contracts)"
+        - "No — sequential required (shared files, migration, or dependency)"
+        - "Unclear — needs assessment before starting"
+    validations:
+      required: true
+
+  - type: textarea
+    id: worktree_requirement
+    attributes:
+      label: "Worktree Requirement"
+      description: "Branch name, worktree path, and env-file status for this sub-issue."
+      placeholder: |
+        - Branch: feat/<short-description>
+        - Worktree: ../<repo>-worktrees/feat/<short-description>
+        - Env files: copy from default worktree; never stage
+    validations:
+      required: false
+
+  - type: textarea
+    id: testing_requirements
+    attributes:
+      label: "Testing Requirements"
+      description: "Which tests must be written or pass before this sub-issue can be closed?"
+      placeholder: |
+        - Unit tests: ...
+        - Integration tests: ...
+        - E2E tests: ...
+        - Commands: `{{TEST_CMD}}`
+    validations:
+      required: true
+
+  - type: textarea
+    id: demo_requirements
+    attributes:
+      label: "Demo Requirements"
+      description: "What evidence must be captured to demonstrate this task is complete?"
+      placeholder: |
+        - Screenshot of ...
+        - CLI output showing ...
+        - Test report link
+    validations:
+      required: false
+
+  - type: textarea
+    id: reviewer_score
+    attributes:
+      label: "Reviewer Score / Verdict"
+      description: "To be filled in by the reviewer after implementation. Format: Score X/10 — Verdict: PASS / REVISE / BLOCK."
+      placeholder: |
+        Score: /10
+        Verdict:
+        Critical issues:
+        Major issues:
+        Minor/Nit issues:
+        Evidence checked:
+    validations:
+      required: false
+
+  - type: textarea
+    id: handover_notes
+    attributes:
+      label: "Handover Notes"
+      description: "Notes for the next session or agent picking up this sub-issue. What is the current state? What should happen next?"
+      placeholder: |
+        Current state: ...
+        Next best action:
+        1. ...
+        2. ...
+        Relevant files: ...
+        Commands run: ...
+        Verification status: ...
+    validations:
+      required: false

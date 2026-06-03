@@ -1,0 +1,101 @@
+name: "Feature Request"
+description: "Propose a new feature or enhancement."
+title: "[Feature] "
+labels: ["type: task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose a new feature or a meaningful enhancement to an existing one.
+        Fill in all required fields before work is assigned.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem"
+      description: "What problem does this feature solve? Who is affected and how often?"
+      placeholder: |
+        Currently, users cannot ...
+        This causes ...
+        Affected: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: "Proposed Solution"
+      description: "Describe the feature or change you want. Be as specific as possible."
+      placeholder: |
+        Add the ability to ...
+        This would work by ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: user_value
+    attributes:
+      label: "User Value"
+      description: "What does the user gain when this feature ships? Why is it valuable?"
+      placeholder: "As a user, I can now ... which means ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: "Acceptance Criteria"
+      description: "Exact, verifiable conditions that must be true for this feature to be considered done."
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives Considered"
+      description: "What other approaches were considered and why were they not chosen?"
+      placeholder: |
+        - Alternative A: ... — rejected because ...
+        - Alternative B: ... — rejected because ...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: parallel_safe
+    attributes:
+      label: "Parallel-safe?"
+      description: "Can this feature be implemented simultaneously with other open tasks without file conflicts?"
+      options:
+        - "Yes — parallel-safe (separate module, no shared contracts)"
+        - "No — sequential required (touches shared files, migrations, or auth)"
+        - "Unclear — needs assessment before starting"
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification_plan
+    attributes:
+      label: "Verification Plan"
+      description: "How will this feature be verified once implemented?"
+      placeholder: |
+        - Run: `{{TEST_CMD}}`
+        - Run: `{{BUILD_CMD}}`
+        - Manual check: ...
+        - E2E: `{{E2E_CMD}}`
+    validations:
+      required: true
+
+  - type: textarea
+    id: demo_requirement
+    attributes:
+      label: "Demo Requirement"
+      description: "What evidence must be captured to show this feature works? (screenshot, GIF, CLI output, etc.)"
+      placeholder: |
+        - Screenshot of ...
+        - GIF of the new user flow ...
+        - CLI output showing ...
+    validations:
+      required: false

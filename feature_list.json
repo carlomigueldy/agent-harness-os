@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "updated": "YYYY-MM-DD",
+  "features": [
+    {
+      "id": "example-feature-01",
+      "priority": 1,
+      "area": "core",
+      "title": "Example Feature — replace with your first real feature",
+      "user_visible_behavior": "Describe what the user sees or experiences when this feature works correctly.",
+      "status": "not_started",
+      "github_issue": null,
+      "dependencies": [],
+      "blockers": [],
+      "parallel_safe": false,
+      "verification": [
+        "{{TEST_CMD}} --grep 'example-feature-01'",
+        "Manual: navigate to the feature and confirm expected behavior"
+      ],
+      "evidence": [],
+      "notes": "RULES: (1) Only one feature may be 'in_progress' at a time unless parallel_safe is true. (2) A feature cannot be set to 'passing' without evidence — evidence must reference test output, screenshots, GIFs, videos, or logs. (3) Link github_issue to the issue number once created. (4) Set parallel_safe to true only after a formal parallelization assessment."
+    },
+    {
+      "id": "example-feature-02",
+      "priority": 2,
+      "area": "<!-- FILL: app area, e.g. auth, api, ui, infra -->",
+      "title": "Example Feature 2 — replace with your second real feature",
+      "user_visible_behavior": "Describe what the user sees or experiences when this feature works correctly.",
+      "status": "not_started",
+      "github_issue": null,
+      "dependencies": ["example-feature-01"],
+      "blockers": [],
+      "parallel_safe": false,
+      "verification": [
+        "{{TEST_CMD}} --grep 'example-feature-02'",
+        "Manual: verify integration with example-feature-01"
+      ],
+      "evidence": [],
+      "notes": "This feature depends on example-feature-01 completing first (see dependencies). Parallel work is blocked until the dependency is 'passing' with evidence. Replace all placeholder values with real feature data during the initialization workflow."
+    }
+  ]
+}
