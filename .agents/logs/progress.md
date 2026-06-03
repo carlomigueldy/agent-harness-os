@@ -12,21 +12,19 @@ See also: [../../claude-progress.md](../../claude-progress.md) for the root-leve
 
 | Field | Value |
 |---|---|
-| Phase | <!-- e.g. Planning / Implementation / Review / Stabilization --> |
-| Current Task | — |
-| Branch | — |
-| Worktree Path | — |
-| Last Verification | — |
-| Last Demo Artifact | — |
-| Last Handover | — |
+| Phase | Implementation |
+| Current Task | Harden harness template repo (README + self-verifying CI) |
+| Branch | `harness/repo-hardening` |
+| Worktree Path | `../agent-harness-templates-worktrees/harness/repo-hardening` |
+| Last Verification | `scripts/verify-harness.sh` (this sprint) |
+| Last Demo Artifact | CI run + verify-harness.sh output (this sprint) |
+| Last Handover | See `../../session-handoff.md` |
 
 ---
 
 ## In Progress
 
-<!-- FILL: List tasks currently being worked on. One task unless explicitly parallel-safe. -->
-
-— none —
+- Epic #1 — Harden harness template repo (README + self-verifying CI). Sub-issues #2 (README), #3 (CI).
 
 ---
 
@@ -133,7 +131,57 @@ Clear definition of done.
 
 ### Active Sprint Contract
 
-— none —
+## Sprint Contract — Harden harness template repo (README + self-verifying CI)
+
+**Status:** Complete — verification 11/11, reviewer PASS 10/10, PR #4 open (2026-06-03).
+
+### Goal
+Make the template shareable and self-checking: a root README landing page plus a CI-backed verification script that is the single source of verification truth.
+
+### Scope
+Add `README.md`, `scripts/verify-harness.sh`, `.github/workflows/ci.yml`. Update harness logs and `feature_list.json`.
+
+### Non-goals
+Filling template placeholders (that is adoption); adding a LICENSE; altering existing harness docs beyond what verification requires.
+
+### Acceptance Criteria
+- README renders on GitHub, all relative links resolve, links to `adoption.md`.
+- `bash scripts/verify-harness.sh` exits 0 locally and in CI.
+- CI is green on the PR; no AI attribution; no secrets; clean state.
+
+### Verification Plan
+- Run `scripts/verify-harness.sh` locally and capture output.
+- Confirm the CI run is green on the PR.
+
+### Demo Plan
+- Paste verify-harness.sh CLI output into `../logs/verification.md`; link the green CI run in the PR.
+
+### Dependencies
+- Epic #1; sub-issues #2 (README), #3 (CI).
+
+### Blockers
+- None.
+
+### Worktree
+- Branch `harness/repo-hardening` at `../agent-harness-templates-worktrees/harness/repo-hardening`. No env files needed.
+
+### Skills / Superpowers
+- Single-agent implementation; reviewer subagent for the 10/10 review loop.
+
+### Orchestration Mode
+- Single agent (sequential) + independent reviewer subagent. Multi-agent orchestration is not justified for a small docs+CI change (see `../workflows/orchestration.md`).
+
+### Parallelization Assessment
+- README and CI are parallel-safe (separate files) but small enough to do sequentially in one context.
+
+### Risk Level
+- Low.
+
+### Model Tier
+- Sonnet-level implementation; Opus-level final review.
+
+### Done Means
+- All acceptance criteria met, CI green, logs + `feature_list.json` updated, PR merged into `main`, worktree cleaned.
 
 ---
 

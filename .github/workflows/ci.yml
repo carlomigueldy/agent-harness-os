@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# Actions are pinned to major-version tags (@v4/@v5) rather than commit SHAs:
+# this keeps the template low-maintenance for adopters. SHA-pin if your threat
+# model requires it.
+jobs:
+  verify-harness:
+    name: Verify harness
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install YAML parser
+        run: python -m pip install --quiet pyyaml
+
+      - name: Run harness verification
+        run: bash scripts/verify-harness.sh
+
+      - name: Shellcheck (informational)
+        continue-on-error: true
+        run: shellcheck --severity=error init.sh scripts/*.sh
