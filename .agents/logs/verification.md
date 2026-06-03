@@ -67,7 +67,30 @@ Implementation agent.
 
 <!-- FILL: Append new verification entries below in reverse-chronological order (newest first). -->
 
-— no entries yet —
+## 2026-06-03 — Verification: Harden harness template repo (README + CI)
+
+### Commands Run
+| Command | Result | Notes |
+|---|---|---|
+| `bash scripts/verify-harness.sh` | PASS | 11 passed / 0 failed, exit 0 |
+| `bash -n scripts/verify-harness.sh` / `bash -n init.sh` | PASS | syntax OK |
+| link-checker unit test (titled / angle-bracket / reference forms) | PASS | captures local targets, flags missing |
+| `ruby -ryaml` on issue forms + `ci.yml` | PASS | 6/6 valid |
+| empty-repo regression run | PASS | exits 1, only legitimate passes remain |
+
+### Artifacts Produced
+- CI run on the PR (GitHub Actions "CI" workflow) — see PR #4.
+- `verify-harness.sh` console output (11/0) captured this session.
+
+### Failed Attempts
+- Round-1 review found false-negative paths in `verify-harness.sh` (M1/M2/m1/m2); all fixed and re-verified adversarially in round 2.
+
+### Remaining Risks
+- Verification depends on `python3` (+ `pyyaml`/`ruby`) for JSON/YAML/link checks; CI installs `pyyaml`.
+
+### Links
+- Issues: #1 (epic), #2 (README), #3 (CI)
+- PR: #4
 
 ---
 
