@@ -1,6 +1,8 @@
 # Agent Harness OS — Template
 
-[![CI](https://github.com/carlomigueldy/agent-harness-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/carlomigueldy/agent-harness-templates/actions/workflows/ci.yml)
+[![CI](https://github.com/carlomigueldy/agent-harness-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/carlomigueldy/agent-harness-templates/actions/workflows/ci.yml) [![Live demo](https://img.shields.io/badge/live%20demo-agent--harness--os.vercel.app-000?logo=vercel&logoColor=white)](https://agent-harness-os.vercel.app)
+
+> 🔗 **Live landing page:** **<https://agent-harness-os.vercel.app>** — a single-page tour of the harness, deployed from [`landing/`](landing/) via Vercel.
 
 A **reusable, repo-level operating system** for working with coding agents — drop it into any project so future humans, agents, subagents, agent teams, and dynamic workflows can understand, continue, verify, and hand over work without losing context.
 
