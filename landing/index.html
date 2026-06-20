@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Harness OS — The operating system for coding agents</title>
+  <meta name="description" content="A reusable, repo-level operating system for coding agents. Drop it into any repo so humans, agents, subagents, and agent teams continue, verify, and hand off work — without losing context." />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#E9EBEE" />
+  <link rel="canonical" href="https://carlomigueldy.github.io/agent-harness-os/" />
+
+  <!-- Icons -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="favicon.svg" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Agent Harness OS — The operating system for coding agents" />
+  <meta property="og:description" content="Drop it into any repo. Future humans, agents, and agent teams continue, verify, and hand off work — without losing context." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Agent Harness OS" />
+  <meta property="og:url" content="https://carlomigueldy.github.io/agent-harness-os/" />
+  <meta property="og:image" content="https://carlomigueldy.github.io/agent-harness-os/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Agent Harness OS — the operating system for coding agents. verify-harness.sh: PASS." />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Agent Harness OS — The operating system for coding agents" />
+  <meta name="twitter:description" content="Drop it into any repo. Continue, verify, and hand off agent work — without losing context." />
+  <meta name="twitter:image" content="https://carlomigueldy.github.io/agent-harness-os/og.png" />
+
+  <!-- Fonts: Bricolage Grotesque (display), IBM Plex Sans (body), IBM Plex Mono (utility) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind (Play CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            porcelain: '#E9EBEE',
+            mist: '#F3F5F7',
+            rule: '#D3D8DF',
+            ink: '#11151D',
+            graphite: '#5A6273',
+            ultramarine: '#2330E8',
+            amber: '#E0922A',
+            oxblood: '#7A2230',
+          },
+          fontFamily: {
+            display: ['"Bricolage Grotesque"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            sans: ['"IBM Plex Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --spine-x: 22px;     /* x-position of the spine, from the content column's left edge */
+      --content-x: 46px;   /* left padding of section content so text clears the spine */
+      --gutter: 20px;      /* right padding of section content */
+      --ink: #11151D;
+      --ultramarine: #2330E8;
+      --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+    @media (min-width: 768px) {
+      :root { --spine-x: 96px; --content-x: 176px; --gutter: 40px; }
+    }
+
+    html, body { background: #E9EBEE; }
+    /* overflow-x: clip guards the 100vw gate breakout from a horizontal scrollbar on
+       classic-scrollbar desktops, without breaking the sticky nav (unlike overflow:hidden). */
+    body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: clip; }
+    .tnum { font-variant-numeric: tabular-nums; }
+
+    /* ---- The Live Spine (signature) ---- */
+    .spine {
+      position: absolute;
+      left: var(--spine-x);
+      top: 0; bottom: 0;
+      width: 2px;
+      background: var(--ink);
+      transform-origin: top center;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .pulse {
+      position: absolute;
+      left: var(--spine-x);
+      top: 0;
+      width: 10px; height: 10px;
+      margin-left: -5px; margin-top: -5px;
+      border-radius: 9999px;
+      background: var(--ultramarine);
+      box-shadow: 0 0 0 4px rgba(35, 48, 232, 0.16), 0 0 14px 2px rgba(35, 48, 232, 0.45);
+      z-index: 6;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .node {
+      position: absolute;
+      left: var(--spine-x);
+      top: 0;
+      width: 15px; height: 15px;
+      margin-left: -7.5px;
+      border-radius: 9999px;
+      background: #F3F5F7;
+      border: 2px solid #5A6273;
+      z-index: 7;
+      transition: background-color .25s var(--ease), border-color .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease);
+    }
+    .node--lit {
+      background: var(--ultramarine);
+      border-color: var(--ultramarine);
+      box-shadow: 0 0 0 5px rgba(35, 48, 232, 0.12);
+    }
+    .node--terminus { width: 19px; height: 19px; margin-left: -9.5px; }
+    /* Row nodes live inside the padded .section__body, so pull them back onto the spine. */
+    .node--row { left: calc(var(--spine-x) - var(--content-x)); }
+
+    /* ---- Section primitives ---- */
+    .section { position: relative; }
+    .section__body { padding-left: var(--content-x); padding-right: var(--gutter); }
+
+    .eyebrow {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: .75rem; font-weight: 500;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: #5A6273;
+    }
+    .h1 { font-size: clamp(2.75rem, 7vw, 6rem); line-height: .98; letter-spacing: -0.03em; }
+    .h2 { font-size: clamp(1.75rem, 3.2vw, 2.75rem); line-height: 1.02; letter-spacing: -0.02em; }
+    .lead { font-size: 1.3125rem; line-height: 1.5; }
+    .body { font-size: 1.0625rem; line-height: 1.6; }
+
+    /* ---- Boot ledger / command console ---- */
+    .console {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: clamp(.74rem, 1.9vw, .9rem);
+      line-height: 1.85;
+    }
+    .console__row { display: flex; gap: .5rem; white-space: nowrap; }
+    .console .dots { color: #B8C0CB; flex: 1 1 auto; overflow: hidden; }
+    .ok { color: var(--ultramarine); font-weight: 600; }
+    .pass-token { color: var(--ultramarine); font-weight: 600; border-radius: 4px; }
+
+    /* ---- Loop instrument ticks ---- */
+    .tick {
+      height: 16px; width: 4px; border-radius: 2px;
+      background: #D3D8DF;
+      transition: background-color .2s var(--ease);
+    }
+    .tick--on { background: #E0922A; }
+
+    /* ---- Verdict chips ---- */
+    .chip {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: .8125rem; font-weight: 600; letter-spacing: .08em;
+      padding: .35rem .75rem; border-radius: 6px; display: inline-flex; align-items: center; gap: .4rem;
+    }
+
+    /* ---- Full-bleed for the inverted Review Gate ---- */
+    .bleed {
+      position: absolute; top: 0; bottom: 0;
+      left: 50%; transform: translateX(-50%);
+      width: 100vw;
+      background: var(--ink);
+      z-index: 0;
+    }
+    .spine--gate {
+      position: absolute; left: var(--spine-x); top: 0; bottom: 0;
+      width: 2px; background: var(--ultramarine); z-index: 5; pointer-events: none;
+    }
+
+    /* ---- Nav ---- */
+    .nav { transition: background-color .3s var(--ease), border-color .3s var(--ease), backdrop-filter .3s var(--ease); border-bottom: 1px solid transparent; }
+    .nav--scrolled { background: rgba(233,235,238,.82); backdrop-filter: blur(10px); border-bottom-color: #D3D8DF; }
+
+    /* ---- Links & interactive ---- */
+    .link-u { color: var(--ultramarine); text-decoration: none; background-image: linear-gradient(var(--ultramarine), var(--ultramarine)); background-size: 0% 1px; background-repeat: no-repeat; background-position: 0 100%; transition: background-size .2s var(--ease); }
+    .link-u:hover { background-size: 100% 1px; }
+    .btn-primary { background: var(--ultramarine); color: #E9EBEE; transition: filter .15s var(--ease), transform .15s var(--ease); }
+    .btn-primary:hover { filter: brightness(1.12); }
+    .btn-primary:active { transform: translateY(1px); }
+    .btn-ghost { transition: border-color .15s var(--ease), color .15s var(--ease); }
+    .subsys:hover .node:not(.node--lit) { transform: translateY(-1px); border-color: var(--ultramarine); }
+    /* Paths are always visible (no hover-only disclosure) so they reach keyboard + touch users. */
+    .subsys .paths { color: #5A6273; }
+
+    .cta-ring { position: relative; }
+
+    /* ---- Focus visibility ---- */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--ultramarine); outline-offset: 3px; border-radius: 3px;
+    }
+    .on-ink a:focus-visible, .on-ink button:focus-visible { outline-color: #E9EBEE; }
+
+    .skip {
+      position: absolute; left: -999px; top: 0; z-index: 100;
+      background: var(--ink); color: #E9EBEE; padding: .6rem 1rem; border-radius: 0 0 8px 0;
+    }
+    .skip:focus { left: 0; }
+
+    /* ---- Reduced motion: everything renders at final state ---- */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .pulse { display: none; }
+    }
+  </style>
+</head>
+
+<body class="font-sans text-ink antialiased selection:bg-ultramarine/15">
+  <a href="#content" class="skip font-mono text-sm">Skip to content</a>
+
+  <!-- ===================== NAV ===================== -->
+  <header id="nav" class="nav sticky top-0 z-50">
+    <div class="mx-auto flex h-14 w-full max-w-[72rem] items-center justify-between px-5 sm:px-8">
+      <a href="#top" class="font-mono text-[0.95rem] font-semibold tracking-tight text-ink">harness-os</a>
+      <nav class="flex items-center gap-4 font-mono text-xs tracking-wide text-graphite">
+        <a href="#subsystems" class="hidden link-u py-3 sm:inline-flex sm:items-center">5&nbsp;SUBSYSTEMS</a>
+        <a href="#gate" class="hidden link-u py-3 sm:inline-flex sm:items-center">REVIEW&nbsp;GATE</a>
+        <a href="https://github.com/carlomigueldy/agent-harness-os" class="link-u inline-flex items-center py-3 text-ink" target="_blank" rel="noopener">GITHUB&nbsp;→</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content" class="relative mx-auto w-full max-w-[72rem]">
+    <span id="top"></span>
+    <!-- Signature: the live spine + traveling pulse -->
+    <div class="spine" aria-hidden="true"></div>
+    <div class="pulse" aria-hidden="true"></div>
+
+    <!-- ===================== 1 · BOOT / HERO ===================== -->
+    <section class="section" aria-labelledby="hero-h">
+      <span class="node" data-node style="top: 38px;" aria-hidden="true"></span>
+      <div class="section__body pt-16 pb-24 sm:pt-24 md:pb-32">
+        <p class="eyebrow" data-hero>REPO-LEVEL · STACK-AGNOSTIC</p>
+        <h1 id="hero-h" class="h1 mt-5 font-display font-extrabold text-ink" data-hero>
+          <span class="block">The operating system</span>
+          <span class="block">for coding agents.</span>
+        </h1>
+        <p class="lead mt-7 max-w-[46ch] text-graphite" data-hero>
+          Drop it into any repo. Future humans, agents, subagents, and agent teams continue, verify, and hand off work — without losing context.
+        </p>
+
+        <div class="mt-9 flex flex-wrap items-center gap-3" data-hero>
+          <a href="https://github.com/carlomigueldy/agent-harness-os" target="_blank" rel="noopener"
+             class="btn-primary cta-ring inline-flex items-center gap-2 rounded-lg px-5 py-3 font-mono text-sm font-semibold">
+            Drop it in <span aria-hidden="true">→</span>
+          </a>
+          <a href="#subsystems"
+             class="btn-ghost inline-flex items-center gap-2 rounded-lg border border-rule px-5 py-3 font-mono text-sm font-medium text-ink hover:border-ink">
+            Read the harness
+          </a>
+        </div>
+
+        <!-- Boot Ledger -->
+        <div class="mt-12 max-w-[40rem] overflow-x-auto rounded-xl border border-rule bg-mist p-5 sm:p-6" data-hero>
+          <div class="mb-3 flex items-center gap-1.5" aria-hidden="true">
+            <span class="h-2.5 w-2.5 rounded-full bg-rule"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-rule"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-rule"></span>
+          </div>
+          <div class="console text-ink" role="img" aria-label="Terminal output: bash init.sh detects the stack, mounts the five subsystems — instructions, tools, environment, state, feedback — all ok, then verify-harness.sh resolves to PASS and the worktree, env, and git are ready.">
+            <div class="console__row" data-boot><span class="text-graphite">$</span><span>bash init.sh</span></div>
+            <div class="console__row" data-boot><span class="ok">✓</span><span class="text-graphite">stack detected</span></div>
+            <div class="console__row" data-boot><span>mount&nbsp;&nbsp;0x01 instructions</span><span class="dots">······································</span><span class="ok" data-ok>ok</span></div>
+            <div class="console__row" data-boot><span>mount&nbsp;&nbsp;0x02 tools</span><span class="dots">······································</span><span class="ok" data-ok>ok</span></div>
+            <div class="console__row" data-boot><span>mount&nbsp;&nbsp;0x03 environment</span><span class="dots">······································</span><span class="ok" data-ok>ok</span></div>
+            <div class="console__row" data-boot><span>mount&nbsp;&nbsp;0x04 state</span><span class="dots">······································</span><span class="ok" data-ok>ok</span></div>
+            <div class="console__row" data-boot><span>mount&nbsp;&nbsp;0x05 feedback</span><span class="dots">······································</span><span class="ok" data-ok>ok</span></div>
+            <div class="console__row" data-boot><span>verify-harness.sh</span><span class="dots">···························</span><span class="pass-token" data-pass>PASS</span></div>
+            <div class="console__row" data-boot><span class="ok">✓</span><span class="text-graphite">worktree · env · git ready</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 2 · THE FIVE SUBSYSTEMS ===================== -->
+    <section id="subsystems" class="section" aria-labelledby="sub-h">
+      <div class="section__body pb-24 md:pb-32">
+        <p class="eyebrow" data-reveal>THE CLOSED SET · 5 SUBSYSTEMS</p>
+        <h2 id="sub-h" class="h2 mt-4 font-display font-bold text-ink" data-reveal>Five subsystems. One kernel.</h2>
+        <p class="body mt-5 max-w-[58ch] text-graphite" data-reveal>
+          The harness is a closed set of five. The numbering is the set, not decoration.
+        </p>
+
+        <ul class="mt-10 divide-y divide-rule border-y border-rule">
+          <li class="subsys group relative py-5" data-reveal>
+            <span class="node node--row" data-node style="top: 24px;" aria-hidden="true"></span>
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
+              <span class="font-mono text-sm font-semibold tracking-wide text-ink shrink-0 w-[10.5rem]">0x01&nbsp;·&nbsp;INSTRUCTIONS</span>
+              <span class="body text-graphite">Rules, constraints, definition of done.</span>
+            </div>
+            <p class="paths mt-1 pl-0 font-mono text-xs sm:pl-[11.5rem]">AGENTS.md · CLAUDE.md · .agents/context/</p>
+          </li>
+          <li class="subsys group relative py-5" data-reveal>
+            <span class="node node--row" data-node style="top: 24px;" aria-hidden="true"></span>
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
+              <span class="font-mono text-sm font-semibold tracking-wide text-ink shrink-0 w-[10.5rem]">0x02&nbsp;·&nbsp;TOOLS</span>
+              <span class="body text-graphite">Slash commands, skills, scripts, MCP tools.</span>
+            </div>
+            <p class="paths mt-1 pl-0 font-mono text-xs sm:pl-[11.5rem]">.claude/commands/ · .claude/skills/</p>
+          </li>
+          <li class="subsys group relative py-5" data-reveal>
+            <span class="node node--row" data-node style="top: 24px;" aria-hidden="true"></span>
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
+              <span class="font-mono text-sm font-semibold tracking-wide text-ink shrink-0 w-[10.5rem]">0x03&nbsp;·&nbsp;ENVIRONMENT</span>
+              <span class="body text-graphite">Runtimes, env vars, local setup.</span>
+            </div>
+            <p class="paths mt-1 pl-0 font-mono text-xs sm:pl-[11.5rem]">init.sh · .agents/context/environment.md</p>
+          </li>
+          <li class="subsys group relative py-5" data-reveal>
+            <span class="node node--row" data-node style="top: 24px;" aria-hidden="true"></span>
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
+              <span class="font-mono text-sm font-semibold tracking-wide text-ink shrink-0 w-[10.5rem]">0x04&nbsp;·&nbsp;STATE</span>
+              <span class="body text-graphite">Progress, decisions, handovers, a machine-readable feature list.</span>
+            </div>
+            <p class="paths mt-1 pl-0 font-mono text-xs sm:pl-[11.5rem]">claude-progress.md · feature_list.json</p>
+          </li>
+          <li class="subsys group relative py-5" data-reveal>
+            <span class="node node--row" data-node style="top: 24px;" aria-hidden="true"></span>
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
+              <span class="font-mono text-sm font-semibold tracking-wide text-ink shrink-0 w-[10.5rem]">0x05&nbsp;·&nbsp;FEEDBACK</span>
+              <span class="body text-graphite">Review loops, verification, scoring rubric, retrospectives.</span>
+            </div>
+            <p class="paths mt-1 pl-0 font-mono text-xs sm:pl-[11.5rem]">evaluator-rubric.md · .agents/logs/verification.md</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== 3 · RIGHT-SIZED ORCHESTRATION ===================== -->
+    <section class="section" aria-labelledby="orch-h">
+      <span class="node" data-node style="top: 8px;" aria-hidden="true"></span>
+      <div class="section__body pb-24 md:pb-32">
+        <p class="eyebrow" data-reveal>DISPATCH</p>
+        <h2 id="orch-h" class="h2 mt-4 font-display font-bold text-ink" data-reveal>Match the coordination to the work.</h2>
+        <p class="body mt-5 max-w-[58ch] text-graphite" data-reveal>
+          Escalate only as far as the task earns. Most work is one agent. Reach for more structure when — and only when — it pays for its coordination cost.
+        </p>
+
+        <!-- escalation ladder -->
+        <div class="mt-9 flex flex-wrap items-center gap-x-2 gap-y-3 font-mono text-sm" data-reveal>
+          <span class="rounded-md border border-rule bg-mist px-3 py-2 text-ink">single agent</span>
+          <span class="text-graphite" aria-hidden="true">→</span>
+          <span class="rounded-md border border-rule bg-mist px-3 py-2 text-ink">subagents</span>
+          <span class="text-graphite" aria-hidden="true">→</span>
+          <span class="rounded-md border border-rule bg-mist px-3 py-2 text-ink">agent teams</span>
+          <span class="text-graphite" aria-hidden="true">→</span>
+          <span class="rounded-md border border-rule bg-mist px-3 py-2 text-ink">dynamic workflows</span>
+        </div>
+
+        <figure class="mt-11" data-reveal>
+          <blockquote class="font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-bold leading-[1.08] tracking-tight text-ink">
+            “Don’t force parallelism.”
+          </blockquote>
+        </figure>
+
+        <div class="mt-9 grid gap-3 font-mono text-xs text-graphite sm:text-[0.8125rem]" data-reveal>
+          <div class="flex flex-wrap gap-x-2"><span class="text-ink">planner · architect · reviewer</span><span>=</span><span class="text-ultramarine">opus</span></div>
+          <div class="flex flex-wrap gap-x-2"><span class="text-ink">implementer · tester</span><span>=</span><span class="text-ultramarine">sonnet</span></div>
+          <div class="flex flex-wrap gap-x-2"><span class="text-ink">scout</span><span>=</span><span class="text-ultramarine">haiku</span></div>
+        </div>
+        <p class="body mt-7 max-w-[58ch] text-graphite" data-reveal>
+          Each session runs in its own git worktree — isolated, never stepping on <span class="font-mono text-[0.95em] text-ink">main</span>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== 4 · BOUNDED LOOPS ===================== -->
+    <section class="section" aria-labelledby="loops-h">
+      <span class="node" data-node style="top: 8px;" aria-hidden="true"></span>
+      <div class="section__body pb-24 md:pb-32">
+        <p class="eyebrow" data-reveal>AUTONOMY, WITH A HARD STOP</p>
+        <h2 id="loops-h" class="h2 mt-4 font-display font-bold text-ink" data-reveal>Every loop has a ceiling.</h2>
+
+        <div class="mt-9 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <!-- card -->
+          <div class="loop rounded-xl border border-rule bg-mist p-5" data-reveal data-cap="6">
+            <div class="flex items-baseline justify-between">
+              <span class="font-mono text-sm text-ink">/build-loop</span>
+              <span class="font-mono text-sm text-graphite">max <span class="tnum font-semibold text-ink" data-count>06</span></span>
+            </div>
+            <div class="mt-4 flex gap-1.5" data-ticks aria-hidden="true">
+              <span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span>
+            </div>
+          </div>
+          <div class="loop rounded-xl border border-rule bg-mist p-5" data-reveal data-cap="10">
+            <div class="flex items-baseline justify-between">
+              <span class="font-mono text-sm text-ink">/review-loop</span>
+              <span class="font-mono text-sm text-graphite">max <span class="tnum font-semibold text-ink" data-count>10</span></span>
+            </div>
+            <div class="mt-4 flex gap-1.5" data-ticks aria-hidden="true">
+              <span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span>
+            </div>
+          </div>
+          <div class="loop rounded-xl border border-rule bg-mist p-5" data-reveal data-cap="10">
+            <div class="flex items-baseline justify-between">
+              <span class="font-mono text-sm text-ink">/fix-loop</span>
+              <span class="font-mono text-sm text-graphite">max <span class="tnum font-semibold text-ink" data-count>10</span></span>
+            </div>
+            <div class="mt-4 flex gap-1.5" data-ticks aria-hidden="true">
+              <span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span>
+            </div>
+          </div>
+          <div class="loop rounded-xl border border-rule bg-mist p-5" data-reveal data-cap="6">
+            <div class="flex items-baseline justify-between">
+              <span class="font-mono text-sm text-ink">/test-loop</span>
+              <span class="font-mono text-sm text-graphite">max <span class="tnum font-semibold text-ink" data-count>06</span></span>
+            </div>
+            <div class="mt-4 flex gap-1.5" data-ticks aria-hidden="true">
+              <span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span>
+            </div>
+          </div>
+        </div>
+
+        <p class="body mt-7 max-w-[58ch] text-graphite" data-reveal>
+          Every loop has a hard cap and a stop condition. Hit the ceiling and it documents what’s left and hands off — it never spins forever.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== 5 · THE REVIEW GATE (inverted) ===================== -->
+    <section id="gate" class="section on-ink" aria-labelledby="gate-h">
+      <div class="bleed" aria-hidden="true"></div>
+      <div class="spine--gate" aria-hidden="true"></div>
+      <span class="node" data-node style="top: 86px;" aria-hidden="true"></span>
+      <div class="section__body relative z-10 py-24 md:py-32">
+        <p class="eyebrow" style="color:#8A93A6" data-reveal>THE STRICT GATE</p>
+        <h2 id="gate-h" class="h2 mt-4 font-display font-extrabold text-porcelain" data-reveal>Nothing passes at 9.</h2>
+        <p class="body mt-6 max-w-[54ch] text-[#C9CFDA]" data-reveal>
+          A reviewer scores every change 1–10 and returns one verdict. In an autonomous loop,
+          <span class="font-mono text-porcelain">PASS</span> means 10/10 with zero Critical or Major issues. Anything less revises or blocks.
+        </p>
+
+        <div class="mt-10" data-reveal>
+          <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
+            <div class="font-mono text-[clamp(3.5rem,9vw,6rem)] font-semibold leading-none tracking-tight text-porcelain">
+              <span class="tnum" data-score>10</span><span class="text-[#8A93A6]"> / 10</span>
+            </div>
+            <span class="text-2xl text-[#8A93A6]" aria-hidden="true">→</span>
+            <span class="chip" style="background:#2330E8;color:#E9EBEE;font-size:1rem;padding:.55rem 1.15rem;" data-stamp>PASS</span>
+          </div>
+
+          <div class="mt-10 flex flex-wrap items-center gap-3">
+            <span class="eyebrow" style="color:#8A93A6">verdicts</span>
+            <span class="chip" style="background:#2330E8;color:#E9EBEE;">PASS</span>
+            <span class="chip" style="border:1px solid #5A6273;color:#C9CFDA;">REVISE</span>
+            <span class="chip" style="background:#7A2230;color:#E9EBEE;">BLOCK</span>
+          </div>
+        </div>
+
+        <p class="mt-12 font-mono text-xs tracking-wide text-[#8A93A6] sm:text-sm" data-reveal>
+          strict mode: 10/10 with zero Critical or Major — or it doesn’t ship
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== 6 · SELF-VERIFYING (back to light) ===================== -->
+    <section class="section" aria-labelledby="verify-h">
+      <span class="node" data-node style="top: 86px;" aria-hidden="true"></span>
+      <div class="section__body py-24 md:py-32">
+        <p class="eyebrow" data-reveal>ONE SOURCE OF TRUTH</p>
+        <h2 id="verify-h" class="h2 mt-4 font-display font-bold text-ink" data-reveal>One script tells the truth.</h2>
+        <p class="body mt-5 max-w-[60ch] text-graphite" data-reveal>
+          <span class="font-mono text-[0.95em] text-ink">verify-harness.sh</span> checks structure, file-length limits, valid JSON/YAML, that every relative link resolves, schema conformance — and that there are no secrets and no AI attribution anywhere. Run it locally, run it in CI, same result.
+        </p>
+
+        <div class="mt-9 max-w-[34rem] overflow-x-auto rounded-xl border border-rule bg-mist p-5 sm:p-6" data-reveal>
+          <div class="console text-ink" role="img" aria-label="verify-harness.sh output: structure, length caps, valid JSON/YAML, every relative link resolves, no AI attribution, no secrets, and schema conformance — all ok. Result: PASS.">
+            <div class="console__row" data-check><span>structure</span><span class="dots">····························</span><span class="ok" data-checkok>ok</span></div>
+            <div class="console__row" data-check><span>length caps</span><span class="dots">··························</span><span class="ok" data-checkok>ok</span></div>
+            <div class="console__row" data-check><span>valid JSON/YAML</span><span class="dots">······················</span><span class="ok" data-checkok>ok</span></div>
+            <div class="console__row" data-check><span>every relative link resolves</span><span class="dots">··········</span><span class="ok" data-checkok>ok</span></div>
+            <div class="console__row" data-check><span>no AI attribution</span><span class="dots">····················</span><span class="ok" data-checkok>ok</span></div>
+            <div class="console__row" data-check><span>no secrets</span><span class="dots">···························</span><span class="ok" data-checkok>ok</span></div>
+            <div class="console__row" data-check><span>schema conformance</span><span class="dots">···················</span><span class="ok" data-checkok>ok</span></div>
+            <div class="console__row mt-1" data-check><span>verify-harness.sh</span><span class="dots">···················</span><span class="pass-token" data-checkpass>PASS</span></div>
+          </div>
+        </div>
+
+        <div class="mt-6 inline-flex items-center gap-2 rounded-md border border-ultramarine/30 bg-ultramarine/5 px-3 py-1.5 font-mono text-xs text-ultramarine" data-reveal>
+          <span aria-hidden="true">✓</span> CI · self-verifying on every push
+        </div>
+
+        <figure class="mt-11" data-reveal>
+          <blockquote class="font-display text-[clamp(1.5rem,3vw,2.1rem)] font-bold leading-[1.1] tracking-tight text-ink">
+            Evidence over claims. If a check can’t run, it says why.
+          </blockquote>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===================== 7 · HANDOVER / QUICK START (terminus) ===================== -->
+    <section class="section" aria-labelledby="start-h">
+      <span class="node node--terminus" data-node data-terminus style="top: 8px;" aria-hidden="true"></span>
+      <div class="section__body pb-24 md:pb-32">
+        <p class="eyebrow" data-reveal>THE NEXT AGENT NEVER STARTS COLD</p>
+        <h2 id="start-h" class="h2 mt-4 font-display font-bold text-ink" data-reveal>Drop it in. Run bash init.sh.</h2>
+
+        <div class="mt-8 max-w-[44rem] overflow-x-auto rounded-xl border border-rule bg-mist p-5 sm:p-6" data-reveal>
+          <code class="console block text-ink"><span class="text-graphite">$</span> git clone &lt;repo&gt; &amp;&amp; cd &lt;repo&gt; &amp;&amp; bash init.sh</code>
+        </div>
+
+        <p class="body mt-7 max-w-[60ch] text-graphite" data-reveal>
+          Ships stack-agnostic with <span class="font-mono text-[0.95em] text-ink">{{PLACEHOLDER}}</span> markers, specialized once during adoption.
+          <span class="font-mono text-[0.95em] text-ink">init.sh</span> detects your stack and prints branch, worktree, and env status.
+        </p>
+
+        <ol class="mt-8 grid gap-3 font-mono text-sm sm:grid-cols-3" data-reveal>
+          <li class="rounded-lg border border-rule bg-mist p-4"><span class="text-graphite">01</span> <span class="text-ink">Copy the template into your repo</span></li>
+          <li class="rounded-lg border border-rule bg-mist p-4"><span class="text-graphite">02</span> <span class="text-ink">Run bash init.sh</span></li>
+          <li class="rounded-lg border border-rule bg-mist p-4"><span class="text-graphite">03</span> <span class="text-ink">Start your first worktree session</span></li>
+        </ol>
+
+        <div class="mt-10" data-reveal>
+          <a href="https://github.com/carlomigueldy/agent-harness-os" target="_blank" rel="noopener"
+             class="btn-primary cta-ring inline-flex items-center gap-2 rounded-lg px-6 py-3.5 font-mono text-sm font-semibold">
+            Adopt it on GitHub <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="border-t border-rule">
+    <div class="mx-auto w-full max-w-[72rem] px-5 py-10 sm:px-8">
+      <p class="font-mono text-xs leading-relaxed tracking-wide text-graphite">
+        human-owned · verification-first · clean handovers · no AI attribution · stack-agnostic · self-verifying in CI
+      </p>
+      <p class="mt-3 font-mono text-xs text-graphite/80">
+        Agent Harness OS · <a href="https://github.com/carlomigueldy/agent-harness-os" class="link-u inline-block py-2 text-graphite" target="_blank" rel="noopener">github.com/carlomigueldy/agent-harness-os</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ===================== MOTION (progressive enhancement) ===================== -->
+  <script type="module">
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Nav border on scroll — runs regardless of motion preference (no movement).
+    const nav = document.getElementById('nav');
+    const onScroll = () => nav.classList.toggle('nav--scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    if (reduceMotion) {
+      // Content is already at its final, readable state via CSS/markup.
+      // Light up the spine nodes statically so the structure still reads.
+      document.querySelectorAll('[data-node]').forEach((n) => n.classList.add('node--lit'));
+    } else {
+      try {
+        const { animate, inView, stagger } = await import('https://cdn.jsdelivr.net/npm/motion@11/+esm');
+        const EASE = [0.2, 0.7, 0.2, 1];
+
+        // ---- Set initial hidden states (so nothing flashes before animating) ----
+        const hide = (els, y = 16) =>
+          els.forEach((el) => { el.style.opacity = '0'; el.style.transform = `translateY(${y}px)`; });
+
+        const heroEls = [...document.querySelectorAll('[data-hero]')];
+        const bootRows = [...document.querySelectorAll('[data-boot]')];
+        const reveals = [...document.querySelectorAll('[data-reveal]')];
+        hide(heroEls, 12);
+        hide(bootRows, 6);
+        hide(reveals, 16);
+        document.querySelector('.spine').style.transform = 'scaleY(0)';
+        document.querySelectorAll('[data-ok]').forEach((o) => { o.style.opacity = '0'; });
+        document.querySelectorAll('[data-pass]').forEach((p) => { p.style.opacity = '0'; });
+
+        // ---- Spine draws top -> bottom ----
+        animate('.spine', { transform: ['scaleY(0)', 'scaleY(1)'] }, { duration: 0.9, ease: EASE });
+
+        // ---- Hero copy fades up ----
+        animate(heroEls, { opacity: [0, 1], transform: ['translateY(12px)', 'translateY(0px)'] },
+          { duration: 0.55, delay: stagger(0.09, { start: 0.15 }), ease: EASE });
+
+        // ---- Boot ledger streams in order; ok marks pulse amber -> ultramarine ----
+        bootRows.forEach((row, i) => {
+          const delay = 600 + i * 150;
+          setTimeout(() => {
+            animate(row, { opacity: [0, 1], transform: ['translateY(6px)', 'translateY(0px)'] },
+              { duration: 0.32, ease: EASE });
+            // 'ok' marks fade straight into their ultramarine state — amber stays confined to loop ticks.
+            const ok = row.querySelector('[data-ok]');
+            if (ok) animate(ok, { opacity: [0, 1] }, { duration: 0.3, ease: EASE });
+            const pass = row.querySelector('[data-pass]');
+            if (pass) {
+              pass.style.opacity = '1';
+              animate(pass, { boxShadow: ['0 0 0 0 rgba(35,48,232,0)', '0 0 0 8px rgba(35,48,232,0.18)', '0 0 0 0 rgba(35,48,232,0)'] },
+                { duration: 0.9, ease: EASE });
+            }
+          }, delay);
+        });
+
+        // ---- Ignite the first spine nodes as the draw passes them ----
+        const nodes = [...document.querySelectorAll('[data-node]')];
+        nodes.slice(0, 7).forEach((node, i) =>
+          setTimeout(() => node.classList.add('node--lit'), 350 + i * 80));
+
+        // ---- Ambient pulse: travels the spine, then recurs calmly ----
+        const pulse = document.querySelector('.pulse');
+        const travel = () =>
+          animate(pulse,
+            { top: ['0%', '100%'], opacity: [0, 0.9, 0.9, 0] },
+            { duration: 1.6, ease: 'easeInOut', times: [0, 0.1, 0.85, 1] });
+        setTimeout(() => {
+          travel();
+          setInterval(() => travel(), 9000);
+        }, 700);
+
+        // ---- Scroll reveals ----
+        reveals.forEach((el) => {
+          inView(el, () => {
+            animate(el, { opacity: [0, 1], transform: ['translateY(16px)', 'translateY(0px)'] },
+              { duration: 0.6, ease: EASE });
+          }, { margin: '-12% 0px -12% 0px' });
+        });
+
+        // ---- Ignite remaining nodes when their section enters view ----
+        nodes.slice(7).forEach((node) =>
+          inView(node, () => node.classList.add('node--lit'), { margin: '-20% 0px -20% 0px' }));
+
+        // ---- Loop instrument cards: count up + fill ticks ----
+        document.querySelectorAll('.loop').forEach((card) => {
+          inView(card, () => {
+            const cap = parseInt(card.dataset.cap, 10);
+            const countEl = card.querySelector('[data-count]');
+            const ticks = card.querySelectorAll('[data-ticks] .tick');
+            animate(0, cap, {
+              duration: 0.9, ease: EASE,
+              onUpdate: (v) => { countEl.textContent = String(Math.round(v)).padStart(2, '0'); },
+            });
+            ticks.forEach((t, i) => setTimeout(() => t.classList.add('tick--on'), i * (700 / cap)));
+          }, { margin: '-10% 0px -10% 0px' });
+        });
+
+        // ---- Review Gate: score counts 1 -> 10, PASS stamp overshoots ----
+        const scoreEl = document.querySelector('[data-score]');
+        const stamp = document.querySelector('[data-stamp]');
+        if (scoreEl) {
+          scoreEl.textContent = '1';
+          stamp.style.opacity = '0';
+          stamp.style.transform = 'scale(0.9)';
+          inView(scoreEl, () => {
+            animate(1, 10, {
+              duration: 1.1, ease: EASE,
+              onUpdate: (v) => { scoreEl.textContent = String(Math.round(v)); },
+            });
+            setTimeout(() => {
+              animate(stamp, { opacity: [0, 1], transform: ['scale(0.9)', 'scale(1.06)', 'scale(1)'] },
+                { duration: 0.5, ease: EASE });
+            }, 1000);
+          }, { margin: '-15% 0px -15% 0px' });
+        }
+
+        // ---- Self-verify ledger: rows resolve in sequence ----
+        const checkRows = [...document.querySelectorAll('[data-check]')];
+        checkRows.forEach((r) => {
+          const mark = r.querySelector('[data-checkok], [data-checkpass]');
+          if (mark) mark.style.opacity = '0';
+        });
+        const verifyLedger = document.querySelector('[data-check]')?.closest('.console');
+        if (verifyLedger) {
+          inView(verifyLedger, () => {
+            checkRows.forEach((r, i) => setTimeout(() => {
+              const mark = r.querySelector('[data-checkok], [data-checkpass]');
+              if (mark) animate(mark, { opacity: [0, 1] }, { duration: 0.25 });
+            }, i * 130));
+          }, { margin: '-10% 0px -10% 0px' });
+        }
+
+        // ---- Primary CTA: one-time soft ring when it enters view ----
+        document.querySelectorAll('.cta-ring').forEach((cta) => {
+          inView(cta, () => {
+            cta.animate(
+              [{ boxShadow: '0 0 0 0 rgba(35,48,232,0.0)' },
+               { boxShadow: '0 0 0 8px rgba(35,48,232,0.16)' },
+               { boxShadow: '0 0 0 0 rgba(35,48,232,0.0)' }],
+              { duration: 900, easing: 'cubic-bezier(0.2,0.7,0.2,1)' });
+          }, { margin: '-15% 0px -15% 0px' });
+        });
+      } catch (err) {
+        // If the animation library fails to load, reveal everything immediately.
+        document.querySelectorAll('[data-hero], [data-reveal], [data-boot]').forEach((el) => {
+          el.style.opacity = '1'; el.style.transform = 'none';
+        });
+        document.querySelector('.spine').style.transform = 'scaleY(1)';
+        document.querySelectorAll('[data-node]').forEach((n) => n.classList.add('node--lit'));
+      }
+    }
+  </script>
+</body>
+</html>
