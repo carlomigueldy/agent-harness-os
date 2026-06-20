@@ -28,6 +28,14 @@ hdr()  { echo -e "\n${BOLD}$*${RESET}"; }
 EXCLUDE='prompt\.md|verify-harness\.sh'
 exclude_by_path() { grep -vE "^[^:]*(${EXCLUDE}):"; }
 
+# Vendored/generated directories that must never be scanned by recursive greps.
+GREP_EXCLUDE_DIRS=(
+  --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist
+  --exclude-dir=build --exclude-dir=vendor --exclude-dir=.next
+  --exclude-dir=coverage --exclude-dir=.venv --exclude-dir=venv
+  --exclude-dir=__pycache__
+)
+
 # ── 1. Required structure ─────────────────────────────────────────────────────
 hdr "1. Required structure"
 REQUIRED_FILES=(
@@ -90,13 +98,16 @@ elif [[ "$yfail" -eq 0 ]]; then pass "$yran/$ycount YAML file(s) valid"; fi
 hdr "5. Markdown link resolution"
 LINKOUT=$(python3 - <<'PY'
 import os, re
+# Directories that hold vendored/generated content — never scanned.
+PRUNE = {'.git', 'node_modules', 'dist', 'build', 'vendor', '.next',
+         'coverage', '.venv', 'venv', '__pycache__'}
 # Inline links: [txt](dest), [txt](<dest>), [txt](dest "title") — capture dest only.
 inline_re = re.compile(r'\][ \t]*\(\s*<?([^)\s>]+)>?(?:[ \t]+"[^"]*")?\s*\)')
 # Reference definitions: [label]: dest ["title"]  — validate their dest too.
 refdef_re = re.compile(r'(?m)^[ \t]*\[[^\]]+\]:[ \t]*<?(\S+?)>?[ \t]*(?:"[^"]*")?[ \t]*$')
 broken = []; checked = 0
-for root, _, files in os.walk('.'):
-    if '/.git' in root: continue
+for root, dirs, files in os.walk('.'):
+    dirs[:] = [d for d in dirs if d not in PRUNE]
     for f in files:
         if not f.endswith('.md'): continue
         p = os.path.join(root, f); base = os.path.dirname(p)
@@ -124,6 +135,7 @@ if [[ "$BROKEN" -eq 0 ]]; then pass "$NCHECK relative links resolve"; else
 hdr "6. No AI/LLM attribution"
 # Match real attribution forms, then drop lines that are prohibition rules.
 ATTR=$(grep -rniE 'co-authored-by:[[:space:]]*(claude|chatgpt|gpt|codex|copilot|ai)|generated (with|by) (claude|chatgpt|copilot|ai)|🤖 generated|created by (claude|codex|chatgpt)' \
+  "${GREP_EXCLUDE_DIRS[@]}" \
   --include='*.md' --include='*.sh' --include='*.yml' --include='*.yaml' --include='*.json' --include='*.ts' --include='*.js' . 2>/dev/null \
   | exclude_by_path \
   | grep -viE 'never|no `|do not|don.t|avoid|prohibit|without|equivalent|forbidden' || true)
@@ -132,6 +144,7 @@ if [[ -z "$ATTR" ]]; then pass "no AI/LLM attribution found"; else fail "attribu
 # ── 7. No secrets ─────────────────────────────────────────────────────────────
 hdr "7. No secrets"
 SEC=$(grep -rniE '(gh[pousr]_[A-Za-z0-9]{30,})|(AKIA[0-9A-Z]{16})|(-----BEGIN [A-Z ]*PRIVATE KEY-----)|(xox[baprs]-[A-Za-z0-9-]{10,})|(eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,})' \
+  "${GREP_EXCLUDE_DIRS[@]}" \
   --include='*.md' --include='*.sh' --include='*.yml' --include='*.yaml' --include='*.json' --include='*.ts' --include='*.js' --include='*.env*' . 2>/dev/null \
   | exclude_by_path || true)
 if [[ -z "$SEC" ]]; then pass "no secret patterns found"; else fail "possible secret(s):"; echo "$SEC" | sed 's/^/    /'; fi
