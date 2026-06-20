@@ -4,7 +4,8 @@
 #
 # Checks: required structure present, entry-file length limits, feature_list.json
 # valid JSON, GitHub issue-form YAML valid, relative markdown links resolve,
-# no AI/LLM attribution, no secrets, init.sh has valid bash syntax.
+# no AI/LLM attribution, no secrets, shell syntax valid, slash-command schema,
+# skill schema, subagent schema, and context-map presence.
 #
 # Usage:  bash scripts/verify-harness.sh
 # Exits non-zero if any check fails.
@@ -42,11 +43,15 @@ REQUIRED_FILES=(
   AGENTS.md CLAUDE.md init.sh feature_list.json
   claude-progress.md session-handoff.md clean-state-checklist.md evaluator-rubric.md
   .agents/README.md .agents/proposals/README.md .agents/artifacts/README.md
+  .agents/context/slash-commands.md .agents/context/failure-modes.md
+  .agents/context/subagents.md
+  .agents/workflows/autonomous-loops.md .agents/workflows/context-mapping.md
+  .claude/README.md .claude/skills/AGENTS.md
   .github/pull_request_template.md
   .github/ISSUE_TEMPLATE/epic.yml .github/ISSUE_TEMPLATE/epic-subissue.yml
   .github/ISSUE_TEMPLATE/bug_report.yml .github/ISSUE_TEMPLATE/feature_request.yml
 )
-REQUIRED_DIRS=( .agents/context .agents/workflows .agents/logs .github/ISSUE_TEMPLATE )
+REQUIRED_DIRS=( .agents/context .agents/workflows .agents/logs .github/ISSUE_TEMPLATE .claude/commands .claude/skills .claude/agents )
 miss=0
 for f in "${REQUIRED_FILES[@]}"; do [[ -s "$f" ]] || { fail "missing/empty: $f"; miss=1; }; done
 for d in "${REQUIRED_DIRS[@]}"; do [[ -d "$d" ]] || { fail "missing dir: $d"; miss=1; }; done
@@ -159,6 +164,90 @@ for s in init.sh scripts/*.sh; do
   [[ -e "$s" ]] || continue
   if bash -n "$s" 2>/dev/null; then pass "$s syntax OK"; else fail "$s syntax error"; synfail=1; fi
 done
+
+# ── 9. Slash command schema ───────────────────────────────────────────────────
+hdr "9. Slash command schema"
+shopt -s nullglob
+cmd_fail=0; cmd_n=0
+# No stray non-command files: every .md under .claude/commands/ registers as a command.
+for bad in .claude/commands/AGENTS.md .claude/commands/README.md; do
+  [[ -e "$bad" ]] && { fail "$bad would register as a slash command — move it to .agents/context/"; cmd_fail=1; }
+done
+for f in .claude/commands/*; do
+  case "$f" in *.md) ;; *) fail "non-command file in .claude/commands/: $f"; cmd_fail=1 ;; esac
+done
+CMD_HEADINGS=( '## Purpose' '## Usage' '## Procedure' '## Stop Conditions' '## Safety' '## Output' '## Related' )
+for f in .claude/commands/*.md; do
+  cmd_n=$((cmd_n+1))
+  [[ "$(head -1 "$f")" == '---' ]] || { fail "$f: missing YAML frontmatter"; cmd_fail=1; }
+  head -12 "$f" | grep -qE '^description:[[:space:]]*[^[:space:]]' || { fail "$f: missing frontmatter 'description:'"; cmd_fail=1; }
+  for h in "${CMD_HEADINGS[@]}"; do
+    grep -qE "^${h}[[:space:]]*$" "$f" || { fail "$f: missing heading '$h'"; cmd_fail=1; }
+  done
+done
+if [[ "$cmd_n" -eq 0 ]]; then fail "no slash commands found in .claude/commands/"; cmd_fail=1; fi
+[[ "$cmd_fail" -eq 0 ]] && pass "$cmd_n slash command(s) conform to schema"
+
+# ── 10. Skill schema ──────────────────────────────────────────────────────────
+hdr "10. Skill schema"
+sk_fail=0; sk_n=0
+SK_HEADINGS=( '## Purpose' '## When to Use' '## When Not to Use' '## Procedure' '## Checks' '## Related Commands' )
+for d in .claude/skills/*/; do
+  [[ -d "$d" ]] || continue
+  name=$(basename "$d")
+  sf="${d}SKILL.md"
+  [[ -f "$sf" ]] || { fail "$d has no SKILL.md"; sk_fail=1; continue; }
+  sk_n=$((sk_n+1))
+  [[ "$(head -1 "$sf")" == '---' ]] || { fail "$sf: missing YAML frontmatter"; sk_fail=1; }
+  fmname=$(grep -m1 -E '^name:' "$sf" | sed -E 's/^name:[[:space:]]*//' | tr -d '"'\''[:space:]')
+  [[ "$fmname" == "$name" ]] || { fail "$sf: frontmatter name '$fmname' != directory '$name'"; sk_fail=1; }
+  head -12 "$sf" | grep -qE '^description:[[:space:]]*[^[:space:]]' || { fail "$sf: missing frontmatter 'description:'"; sk_fail=1; }
+  for h in "${SK_HEADINGS[@]}"; do
+    grep -qE "^${h}[[:space:]]*$" "$sf" || { fail "$sf: missing heading '$h'"; sk_fail=1; }
+  done
+done
+if [[ "$sk_n" -eq 0 ]]; then fail "no skills found in .claude/skills/"; sk_fail=1; fi
+[[ "$sk_fail" -eq 0 ]] && pass "$sk_n skill(s) conform to schema"
+
+# ── 11. Context maps present ───────────────────────────────────────────────────
+hdr "11. Context maps"
+ctx_fail=0
+for d in .github scripts .agents .agents/logs .claude/skills; do
+  [[ -s "$d/AGENTS.md" ]] || { fail "missing context map: $d/AGENTS.md"; ctx_fail=1; }
+done
+[[ "$ctx_fail" -eq 0 ]] && pass "context maps present in key directories"
+
+# ── 12. Subagent schema ───────────────────────────────────────────────────────
+hdr "12. Subagent schema"
+ag_fail=0; ag_n=0
+for bad in .claude/agents/AGENTS.md .claude/agents/README.md; do
+  [[ -e "$bad" ]] && { fail "$bad would register as a subagent — document the surface in .agents/context/subagents.md"; ag_fail=1; }
+done
+for f in .claude/agents/*; do
+  case "$f" in *.md) ;; *) fail "non-agent file in .claude/agents/: $f"; ag_fail=1 ;; esac
+done
+AG_HEADINGS=( '## Role' '## When to Use' '## Operating Rules' '## Harness Skills & Commands' '## Output' )
+for f in .claude/agents/*.md; do
+  ag_n=$((ag_n+1))
+  base=$(basename "$f" .md)
+  [[ "$(head -1 "$f")" == '---' ]] || { fail "$f: missing YAML frontmatter"; ag_fail=1; }
+  agname=$(grep -m1 -E '^name:' "$f" | sed -E 's/^name:[[:space:]]*//' | tr -d '"'\''[:space:]')
+  [[ "$agname" == "$base" ]] || { fail "$f: frontmatter name '$agname' != filename '$base'"; ag_fail=1; }
+  head -12 "$f" | grep -qE '^description:[[:space:]]*[^[:space:]]' || { fail "$f: missing frontmatter 'description:'"; ag_fail=1; }
+  model=$(grep -m1 -E '^model:' "$f" | sed -E 's/^model:[[:space:]]*//' | tr -d '"'\''[:space:]')
+  case "$model" in haiku|sonnet|opus) ;; *) fail "$f: model '$model' must be one of haiku|sonnet|opus"; ag_fail=1 ;; esac
+  # Read-only contract: an agent that restricts tools AND calls itself read-only must not grant write/exec tools.
+  toolsline=$(grep -m1 -E '^tools:' "$f" || true)
+  if [[ -n "$toolsline" ]] && grep -qiE 'read[ -]only' "$f"; then
+    printf '%s' "$toolsline" | grep -qiE '(^|[,: ])(Bash|Edit|Write|NotebookEdit)([,]|[[:space:]]|$)' \
+      && { fail "$f: declares read-only but its 'tools:' grants a write/exec tool — $toolsline"; ag_fail=1; }
+  fi
+  for h in "${AG_HEADINGS[@]}"; do
+    grep -qE "^${h}[[:space:]]*$" "$f" || { fail "$f: missing heading '$h'"; ag_fail=1; }
+  done
+done
+if [[ "$ag_n" -eq 0 ]]; then fail "no subagents found in .claude/agents/"; ag_fail=1; fi
+[[ "$ag_fail" -eq 0 ]] && pass "$ag_n subagent(s) conform to schema"
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 hdr "Summary"

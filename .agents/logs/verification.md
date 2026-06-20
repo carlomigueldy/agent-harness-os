@@ -67,6 +67,30 @@ Implementation agent.
 
 <!-- FILL: Append new verification entries below in reverse-chronological order (newest first). -->
 
+## 2026-06-20 — Verification: Agent-native harness hardening
+
+### Commands Run
+| Command | Result | Notes |
+|---|---|---|
+| `bash scripts/verify-harness.sh` | PASS | **15 passed / 0 failed**, exit 0 (all 12 sections incl. new command/skill/subagent schema + context-map checks) |
+| §5 markdown link resolution | PASS | 1349 relative links resolve |
+| §9 slash command schema | PASS | 24/24 conform |
+| §10 skill schema | PASS | 12/12 conform |
+| §12 subagent schema | PASS | 11/11 conform (name==file, model tier valid, headings) |
+| `bash -n scripts/verify-harness.sh` / `bash -n init.sh` | PASS | syntax OK |
+| `/command`-reference resolution check | PASS | all 37 distinct `/command` refs resolve to a command file or known builtin |
+
+### Failed Attempts
+- First full run found 2 broken links (`$ARGUMENTS`/`broken-path` placeholders in generated command examples) + 1 attribution false-positive (release-check listing literal scan strings); all reworded so the files model clean content. Re-run clean.
+- Three runnable `bash verify-harness.sh` references corrected to `bash scripts/verify-harness.sh`.
+
+### Remaining Risks
+- `shellcheck` not installed locally — deferred to CI (the `bash -n` syntax checks pass).
+- The subagents generation workflow stalled at 1/11; the remaining 10 subagents were hand-authored to the same schema and pass §12 verification.
+
+### Verified By
+Implementation agent + extended `verify-harness.sh`; adversarial Opus review (3 dimensions) recorded alongside.
+
 ## 2026-06-03 — Verification: Harden harness template repo (README + CI)
 
 ### Commands Run

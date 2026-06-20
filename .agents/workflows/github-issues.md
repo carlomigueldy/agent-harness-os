@@ -78,6 +78,7 @@ Four templates live in [../../.github/ISSUE_TEMPLATE/](../../.github/ISSUE_TEMPL
 Apply labels consistently. Create them in the repo before use.
 
 ```
+# type — what kind of work
 type: epic
 type: task
 type: bug
@@ -85,13 +86,30 @@ type: chore
 type: docs
 type: refactor
 type: test
+type: command         # a .claude/commands/ slash command
+type: agent-skill     # a .claude/skills/ project skill
+
+# priority
 priority: critical
 priority: high
 priority: medium
 priority: low
+
+# status
 status: blocked
 status: in-progress
 status: review
+
+# area — which harness surface (navigation)
+area: harness
+area: commands
+area: skills
+area: context
+area: loops
+area: ci
+area: docs
+
+# execution / process
 parallel-safe
 sequential-required
 needs-verification
@@ -100,6 +118,8 @@ agent-team
 dynamic-workflow
 worktree-session
 ```
+
+> The `type: command`, `type: agent-skill`, and `area: *` labels were added when the harness gained invokable commands/skills (see [`../logs/decisions.md`](../logs/decisions.md)). Adopters create the labels they need before first use.
 
 ---
 

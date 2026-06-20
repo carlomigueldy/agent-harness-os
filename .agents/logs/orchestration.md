@@ -86,6 +86,38 @@ What was done to avoid unnecessary usage.
 
 <!-- FILL: Append new orchestration entries below in reverse-chronological order (newest first). -->
 
+## Orchestration Log — 2026-06-20 — Agent-native harness hardening
+
+### Mode Used
+Hybrid: inline integrator (main agent) + three dynamic workflows.
+
+### Why This Mode
+High file volume (24 commands + 12 skills + 11 subagents = 47 schema-bound files) with clean partition (distinct paths → no write conflict) is the textbook case for scripted fan-out. The architectural backbone (schemas, exemplars, autonomous-loops, review gates, CI) was authored inline for coherence; only the high-volume schema-bound generation was delegated. (Default 8-worker limit exceeded intentionally for fan-out under ultracode; backstopped by deterministic schema CI + Opus review.)
+
+### Workers / Roles
+- Workflow 1 (`harness-surface-fanout`): per-file generate (sonnet) → Opus review-and-fix, for 24 commands + 12 skills. 68 agents.
+- Workflow 2 (`harness-subagent-roster`): same pattern for 11 subagents — **stalled at 1/11**; remaining 10 hand-authored by the integrator to the same schema.
+- Workflow 3 (`harness-final-review`): 3 parallel Opus reviewers (commands/skills, agents/CI, docs/coherence).
+- Integrator: main agent — backbone, schema/CI, index wiring, fixes, verification.
+
+### Skills / Superpowers Used
+- Project skills authored this session; `opus-code-review` pattern used in review stages.
+
+### Commands / Tools Used
+- `Workflow` (3 dynamic workflows), `verify-harness.sh` (deterministic gate).
+
+### Implementation Verification
+`verify-harness.sh` 15/15 PASS; 1349 links resolve; 37/37 `/command` refs resolve; per-file Opus review on generated files.
+
+### Reviewer Score / Verdict
+Final 3-dimension adversarial Opus review (see verification.md / retrospectives.md for the verdict).
+
+### Cost Notes
+sonnet for generation, opus only for review/synthesis; deterministic CI as the cheap backstop so review focuses on quality not schema.
+
+### Follow-up
+- Subagent workflow stall is a known background-task fragility under parallel workflows + session interruptions; hand-authoring was the reliable recovery.
+
 ## Orchestration Log — 2026-06-03 — Harden harness template repo
 
 ### Mode Used

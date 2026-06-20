@@ -82,6 +82,16 @@ Common patterns:
 
 Use a skill when it improves quality, consistency, speed, or verification. Do not invoke skills for the sake of it.
 
+## Use Project Commands, Skills & Loops
+
+This repo ships its own invokable Claude Code surfaces under [`.claude/`](.claude/). Prefer them over re-deriving a procedure:
+
+- **Slash commands** — [`.claude/commands/`](.claude/commands/), indexed in [`.agents/context/slash-commands.md`](.agents/context/slash-commands.md). Highlights: `/gated-orchestration`, `/review-10x`, `/review-pr`, `/security-review`, `/architecture-review`, `/context-map`, `/refresh-context`, `/create-command`, `/create-skill`, `/final-handoff`.
+- **Skills** — [`.claude/skills/`](.claude/skills/), indexed in [`.agents/context/skills.md`](.agents/context/skills.md). They back the commands (e.g. `/review-10x` → `opus-code-review`).
+- **Autonomous loops** — bounded, review-gated loops in [`.agents/workflows/autonomous-loops.md`](.agents/workflows/autonomous-loops.md): `/build-loop` (impl, 6), `/review-loop` (10), `/fix-loop` (10), `/test-loop` (6), `/docs-loop` (4), `/issue-loop` (6), `/skill-evolution-loop` (3). Each has a hard cap and a stop condition — never loop unbounded.
+
+> The implementation loop is `/build-loop`, **not** `/loop` (Claude Code's built-in interval scheduler). When you repeat a procedure, capture it with `/create-command` or `/create-skill`.
+
 ## Use Subagents
 
 Spawn a subagent when you need focused isolation without polluting the main context:
@@ -92,6 +102,8 @@ Spawn a subagent when you need focused isolation without polluting the main cont
 - Find all usages of a component or pattern
 
 A subagent returns a compact summary. The main session then decides what to do with the result.
+
+This harness ships **reusable, model-tiered subagent roles** in [`.claude/agents/`](.claude/agents/) — `planner`/`architect`/`reviewer`/`safety-reviewer`/`integrator`/`skill-smith` (opus), `implementer`/`tester`/`debugger`/`docs-writer` (sonnet), `scout` (haiku, read-only). Dynamic workflows delegate to these in parallel via `agentType`. Index + tiering: [`.agents/context/subagents.md`](.agents/context/subagents.md).
 
 Full guidance: [`.agents/workflows/orchestration.md`](.agents/workflows/orchestration.md)
 
@@ -193,6 +205,8 @@ Before escalating to a stronger model, confirm: Is this high-risk? Architecture-
 | Testing workflow | [`.agents/workflows/testing.md`](.agents/workflows/testing.md) |
 | Release workflow | [`.agents/workflows/release.md`](.agents/workflows/release.md) |
 | Orchestration decision matrix | [`.agents/workflows/orchestration.md`](.agents/workflows/orchestration.md) |
+| Autonomous loops | [`.agents/workflows/autonomous-loops.md`](.agents/workflows/autonomous-loops.md) |
+| Slash command index | [`.agents/context/slash-commands.md`](.agents/context/slash-commands.md) |
 | Skill and superpower index | [`.agents/context/skills.md`](.agents/context/skills.md) |
 | Architecture context | [`.agents/context/architecture.md`](.agents/context/architecture.md) |
 | Conventions | [`.agents/context/conventions.md`](.agents/context/conventions.md) |
