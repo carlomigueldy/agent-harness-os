@@ -45,10 +45,13 @@ Static reference files. Read when you need to understand the project.
 | [`context/commands.md`](context/commands.md) | All install, dev, lint, test, build, and deploy commands |
 | [`context/environment.md`](context/environment.md) | Runtime versions, env vars, local setup, Docker/devcontainer |
 | [`context/worktrees.md`](context/worktrees.md) | Worktree naming, creation, env file copying, and cleanup |
-| [`context/skills.md`](context/skills.md) | Available skills, superpowers, and MCP tools with usage guidance |
+| [`context/skills.md`](context/skills.md) | Project skills + schema, plus superpowers and MCP tools |
+| [`context/slash-commands.md`](context/slash-commands.md) | Invokable `/commands` index + authoring schema |
+| [`context/subagents.md`](context/subagents.md) | Reusable model-tiered subagent roster + schema |
 | [`context/glossary.md`](context/glossary.md) | Project-specific terms, acronyms, and concepts |
 | [`context/known-issues.md`](context/known-issues.md) | Current bugs, limitations, and technical debt |
-| [`context/troubleshooting.md`](context/troubleshooting.md) | Common failure modes and how to recover |
+| [`context/failure-modes.md`](context/failure-modes.md) | Harness failure-mode catalogue and recovery protocol |
+| [`context/troubleshooting.md`](context/troubleshooting.md) | Common environment/tooling failures and how to recover |
 | [`context/resources.md`](context/resources.md) | Useful external links, docs, dashboards, and references |
 
 <!-- FILL: Add links to any additional context files specific to your project. -->
@@ -74,12 +77,28 @@ Step-by-step operational procedures. Follow these workflows when performing the 
 | [`workflows/demo-capture.md`](workflows/demo-capture.md) | How to produce screenshots, GIFs, CLI output, and browser traces |
 | [`workflows/release.md`](workflows/release.md) | Release checklist, changelog, tagging, deployment |
 | [`workflows/orchestration.md`](workflows/orchestration.md) | Decision matrix: single agent / subagent / agent team / dynamic workflow |
+| [`workflows/autonomous-loops.md`](workflows/autonomous-loops.md) | Bounded, review-gated loops (`/build-loop`, `/fix-loop`, …) with iteration caps |
+| [`workflows/context-mapping.md`](workflows/context-mapping.md) | Create/refresh recursive `AGENTS.md` context maps without drift |
 | [`workflows/agent-teams.md`](workflows/agent-teams.md) | Agent team roles, work partitioning, feedback loop |
 | [`workflows/dynamic-workflows.md`](workflows/dynamic-workflows.md) | When and how to create scriptable multi-subagent workflows |
 | [`workflows/worktree-sessions.md`](workflows/worktree-sessions.md) | Worktree creation, env file copying, cleanup |
 | [`workflows/workflow-improvement.md`](workflows/workflow-improvement.md) | When and how to propose harness or workflow improvements |
 
 <!-- FILL: Add links to any project-specific workflow files. -->
+
+---
+
+## `../.claude/` — Invokable Surface (Commands, Skills & Subagents)
+
+The executable entry points that drive the doctrine above. See [`../.claude/README.md`](../.claude/README.md).
+
+| Surface | Index + schema | What it is |
+|---|---|---|
+| [`../.claude/commands/`](../.claude/commands/) | [`context/slash-commands.md`](context/slash-commands.md) | Invokable `/commands` — one `.md` per command |
+| [`../.claude/skills/`](../.claude/skills/) | [`context/skills.md`](context/skills.md) | On-demand skills — one `<name>/SKILL.md` per skill |
+| [`../.claude/agents/`](../.claude/agents/) | [`context/subagents.md`](context/subagents.md) | Reusable model-tiered subagents — one `<name>.md` per role |
+
+`scripts/verify-harness.sh` validates all three schemas. Add new ones with `/create-command`, `/create-skill`, or by copying a subagent role.
 
 ---
 
@@ -127,6 +146,10 @@ See [`artifacts/README.md`](artifacts/README.md) for naming conventions and stor
 | Find the next task | [`../feature_list.json`](../feature_list.json), [`logs/progress.md`](logs/progress.md) |
 | Set up a worktree | [`workflows/worktree-sessions.md`](workflows/worktree-sessions.md) |
 | Choose an execution mode | [`workflows/orchestration.md`](workflows/orchestration.md) |
+| Run a bounded autonomous loop | [`workflows/autonomous-loops.md`](workflows/autonomous-loops.md) |
+| Invoke or author a slash command | [`context/slash-commands.md`](context/slash-commands.md) |
+| Delegate to a subagent role | [`context/subagents.md`](context/subagents.md) |
+| Maintain a context map | [`workflows/context-mapping.md`](workflows/context-mapping.md) |
 | Review finished work | [`workflows/review.md`](workflows/review.md), [`../evaluator-rubric.md`](../evaluator-rubric.md) |
 | Produce demo evidence | [`workflows/demo-capture.md`](workflows/demo-capture.md), [`artifacts/README.md`](artifacts/README.md) |
 | Log a decision | [`logs/decisions.md`](logs/decisions.md) |

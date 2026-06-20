@@ -73,3 +73,10 @@ Thumbs.db
 
 # ── Git worktrees (created as sibling dirs by convention) ──────────────
 # Worktrees live in ../<repo>-worktrees/<branch>, outside this tree.
+
+# ── Claude Code project config ────────────────────────────────────────
+# Track the invokable harness surfaces (commands/, skills/) and their
+# in-repo context docs (.claude/README.md, .claude/skills/AGENTS.md).
+# Ignore only local/personal Claude Code state.
+.claude/settings.local.json
+.claude/worktrees/

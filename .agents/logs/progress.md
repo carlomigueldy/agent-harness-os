@@ -13,18 +13,18 @@ See also: [../../claude-progress.md](../../claude-progress.md) for the root-leve
 | Field | Value |
 |---|---|
 | Phase | Implementation |
-| Current Task | Harden harness template repo (README + self-verifying CI) |
-| Branch | `harness/repo-hardening` |
-| Worktree Path | `../agent-harness-templates-worktrees/harness/repo-hardening` |
-| Last Verification | `scripts/verify-harness.sh` (this sprint) |
-| Last Demo Artifact | CI run + verify-harness.sh output (this sprint) |
+| Current Task | Agent-native harness hardening (commands, skills, loops, context, review gates, CI) |
+| Branch | `harness/agent-native-hardening` (in-place epic branch) |
+| Worktree Path | N/A — in-place branch (see decision 2026-06-20) |
+| Last Verification | `scripts/verify-harness.sh` (extended this sprint) |
+| Last Demo Artifact | verify-harness.sh output (this sprint) |
 | Last Handover | See `../../session-handoff.md` |
 
 ---
 
 ## In Progress
 
-- Epic #1 — Harden harness template repo (README + self-verifying CI). Sub-issues #2 (README), #3 (CI).
+- Agent-native harness hardening — see Active Sprint Contract below. Tracked in-repo (no GitHub tracking issues; the issue workflow is template content).
 
 ---
 
@@ -32,7 +32,7 @@ See also: [../../claude-progress.md](../../claude-progress.md) for the root-leve
 
 <!-- FILL: Append completed tasks in reverse-chronological order. -->
 
-— none —
+- 2026-06-03 — Harden harness template repo (README + self-verifying CI). Reviewer PASS 10/10; merged (PR #4).
 
 ---
 
@@ -131,9 +131,72 @@ Clear definition of done.
 
 ### Active Sprint Contract
 
+## Sprint Contract — Agent-native harness hardening
+
+**Status:** In progress (2026-06-20).
+
+### Goal
+Turn described workflows into invokable capability: real `.claude/commands/` slash commands and `.claude/skills/` project skills, a formal `autonomous-loops` system, recursive context maps, strict Opus review gates, and schema-validating CI — reconciled onto `.agents/` (no duplicate `docs/` tree).
+
+### Scope
+Add `.claude/commands/` (core command set), `.claude/skills/` (core skill set), `.claude/README.md`, `.claude/skills/AGENTS.md`; new `.agents/workflows/autonomous-loops.md` + `.agents/workflows/context-mapping.md`; new `.agents/context/slash-commands.md` + `.agents/context/failure-modes.md`; extend `.agents/context/skills.md`, `.agents/workflows/review.md`, `.agents/workflows/github-issues.md`, `evaluator-rubric.md`; recursive `AGENTS.md` in `.github/`, `scripts/`, `.agents/`; extend `scripts/verify-harness.sh` + `.github/workflows/ci.yml`; update root `README.md` / `AGENTS.md` / `CLAUDE.md` / `.agents/README.md`; add root `CONTRIBUTING.md`.
+
+### Non-goals
+A parallel `docs/` tree; project-specific stack content; weakening existing constraints; creating GitHub tracking issues on the template repo.
+
+### Acceptance Criteria
+- Core `.claude/commands/` exist, each conforming to the command schema; namespace clean (no stray `.md`).
+- Core `.claude/skills/` exist, each `SKILL.md` conforming to the skill schema (frontmatter `name`/`description`, `name` == dir).
+- `autonomous-loops.md` defines every loop with bounded iterations + stop/escalation/handoff/recovery.
+- Recursive context files present in key subdirs.
+- Review gates + 10/10 strict rule documented and referenced by review commands.
+- `verify-harness.sh` validates command/skill/context schemas and exits 0; `shellcheck --severity=error` clean; all relative links resolve.
+- Root entry files surface the new surfaces; entry-file length limits respected (AGENTS.md ≤ 200, CLAUDE.md ≤ 250).
+- No AI/LLM attribution; no secrets.
+
+### Verification Plan
+- `bash scripts/verify-harness.sh` → exit 0 (extended checks).
+- `shellcheck --severity=error scripts/*.sh init.sh`.
+- Markdown link resolution (built into verify-harness.sh).
+- Fresh-session test: a new agent can discover + invoke commands/skills from the repo alone.
+
+### Demo Plan
+- Paste verify-harness.sh output into `../logs/verification.md`; list `/help`-discoverable command count.
+
+### Dependencies
+- None (builds on the existing harness).
+
+### Blockers
+- None.
+
+### Worktree
+- In-place epic branch `harness/agent-native-hardening`. No env files needed. (See decision 2026-06-20.)
+
+### Skills / Superpowers
+- Architect/integrator inline; dynamic workflows for fan-out generation of command/skill files; Opus reviewer gates.
+
+### Orchestration Mode
+- Hybrid: inline authoring of schemas/exemplars/backbone; dynamic workflow fan-out for the high-volume schema-bound files; Opus-led review loop. Justified by file volume (40+) and clean partition (distinct files per worker).
+
+### Parallelization Assessment
+- Parallel-safe: each generated command/skill/context file is a distinct path → no conflict. Backbone + index edits done sequentially by the integrator.
+
+### Risk Level
+- Medium (broad surface; mitigated by schema-enforcing CI + review gates).
+
+### Model Tier
+- Opus-level for architecture, schemas, and review gates; Sonnet-level for schema-bound file generation.
+
+### Done Means
+- All acceptance criteria met, verify-harness.sh green, logs + `feature_list.json` (no template pollution) updated, handover written, single PR opened.
+
+---
+
+### Completed Sprint Contracts
+
 ## Sprint Contract — Harden harness template repo (README + self-verifying CI)
 
-**Status:** Complete — verification 11/11, reviewer PASS 10/10, PR #4 open (2026-06-03).
+**Status:** Complete — verification 11/11, reviewer PASS 10/10, merged via PR #4 (2026-06-03).
 
 ### Goal
 Make the template shareable and self-checking: a root README landing page plus a CI-backed verification script that is the single source of verification truth.
@@ -182,14 +245,6 @@ Filling template placeholders (that is adoption); adding a LICENSE; altering exi
 
 ### Done Means
 - All acceptance criteria met, CI green, logs + `feature_list.json` updated, PR merged into `main`, worktree cleaned.
-
----
-
-### Completed Sprint Contracts
-
-<!-- FILL: Move completed sprint contracts here with a completion date note. -->
-
-— none —
 
 ---
 

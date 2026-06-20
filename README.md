@@ -32,11 +32,16 @@ evaluator-rubric.md       # review scoring rubric
 scripts/verify-harness.sh # single source of verification truth (CI runs this)
 .agents/
   README.md               # harness index / navigation hub
-  context/                # project knowledge (12 reference docs)
-  workflows/              # how to do work (adoption, init, review, orchestration, ...)
+  context/                # project knowledge (incl. slash-commands, failure-modes)
+  workflows/              # how to do work (orchestration, autonomous-loops, review, ...)
   logs/                   # running record (decisions, changelog, verification, ...)
   proposals/              # improvement proposals (require approval)
   artifacts/              # demo/verification evidence
+.claude/
+  README.md               # invokable surface overview
+  commands/               # invokable /slash commands (thin wrappers over workflows)
+  skills/                 # on-demand project skills (<name>/SKILL.md)
+  agents/                 # reusable model-tiered subagents (<name>.md) for workflows
 .github/                  # issue forms + PR template + CI
 ```
 
@@ -70,7 +75,7 @@ The harness verifies **itself**. [`scripts/verify-harness.sh`](scripts/verify-ha
 bash scripts/verify-harness.sh
 ```
 
-It checks: required structure is present, entry files stay within length limits (`AGENTS.md` ≤ 200, `CLAUDE.md` ≤ 250), `feature_list.json` is valid JSON, issue-form YAML is valid, every relative markdown link resolves, there is no AI/LLM attribution, no secrets are present, and shell scripts have valid syntax.
+It checks: required structure is present, entry files stay within length limits (`AGENTS.md` ≤ 200, `CLAUDE.md` ≤ 250), `feature_list.json` is valid JSON, issue-form YAML is valid, every relative markdown link resolves, there is no AI/LLM attribution, no secrets are present, shell scripts have valid syntax, every slash command, skill, and subagent conforms to its schema, and required context maps are present.
 
 ## Core Principles
 
@@ -81,6 +86,7 @@ It checks: required structure is present, entry files stay within length limits 
 - **Worktree-first sessions** — isolate work in `../<repo>-worktrees/<branch>`; never stage copied env files.
 - **GitHub-issue-driven** progress with epic/sub-issue/bug/feature forms and a PR template.
 - **Right-sized orchestration** — single agent by default; subagents for isolated focus; agent teams for collaboration; dynamic workflows for repeatable audits/migrations. Don't force parallelism.
+- **Invokable, not just documented** — workflows are exposed as real Claude Code `/commands`, skills, and reusable model-tiered [subagents](.agents/context/subagents.md) under [`.claude/`](.claude/), with bounded autonomous loops (each with a hard iteration cap). See [`.agents/context/slash-commands.md`](.agents/context/slash-commands.md).
 - **Strict review loop** — a reviewer scores 1–10 and gives `PASS` / `REVISE` / `BLOCK`; autonomous loops require 10/10 with no Critical/Major issues (max 6 iterations).
 
 See the [orchestration decision matrix](.agents/workflows/orchestration.md) and the [evaluator rubric](evaluator-rubric.md).

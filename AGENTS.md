@@ -48,7 +48,7 @@ New session or new agent? Read in this order before doing anything else:
 | Subsystem | Purpose | Key Files |
 |---|---|---|
 | **Instructions** | Rules, constraints, definitions of done | `AGENTS.md`, `CLAUDE.md`, `.agents/context/` |
-| **Tools** | Commands, scripts, MCP tools, skills | `.agents/context/commands.md`, `.agents/context/skills.md` |
+| **Tools** | Slash commands, skills, scripts, MCP tools | `.claude/commands/`, `.claude/skills/`, `.agents/context/slash-commands.md`, `.agents/context/skills.md` |
 | **Environment** | Runtimes, env vars, local setup | `.agents/context/environment.md`, `init.sh` |
 | **State** | Progress, decisions, handovers, feature list | `claude-progress.md`, `.agents/logs/`, `feature_list.json` |
 | **Feedback** | Review loops, verification, rubric, retrospectives | `evaluator-rubric.md`, `.agents/logs/verification.md`, `.agents/logs/retrospectives.md` |
@@ -153,6 +153,17 @@ Default hard limits: 3 subagents, 4-agent teams, 8 dynamic-workflow workers, 6 f
 - Do not use skills for the sake of using skills — use them when they improve quality, speed, or consistency.
 - Propose new skills in `.agents/proposals/` when repeated patterns appear.
 
+## Slash Commands, Skills, Subagents & Loops
+
+This harness ships **invokable** Claude Code surfaces, not just docs:
+
+- **Slash commands** ([`.claude/commands/`](.claude/commands/)) — entry points like `/gated-orchestration`, `/review-10x`, `/create-skill`, `/final-handoff`. Index + schema: [`.agents/context/slash-commands.md`](.agents/context/slash-commands.md).
+- **Skills** ([`.claude/skills/`](.claude/skills/)) — reusable procedures (`opus-code-review`, `repo-discovery`, `handoff-writing`, …) loaded on demand. Index + schema: [`.agents/context/skills.md`](.agents/context/skills.md).
+- **Subagents** ([`.claude/agents/`](.claude/agents/)) — reusable, model-tiered roles (`planner`, `reviewer`, `implementer`, `scout`, …) that dynamic workflows delegate to in parallel. Index + tiering: [`.agents/context/subagents.md`](.agents/context/subagents.md).
+- **Autonomous loops** — bounded, review-gated loops (`/build-loop`, `/fix-loop`, `/review-loop`, …) with hard iteration caps. See [`.agents/workflows/autonomous-loops.md`](.agents/workflows/autonomous-loops.md).
+
+Add new ones with `/create-command` / `/create-skill`; all surfaces are schema-checked by `verify-harness.sh`.
+
 ## Deeper Documentation
 
 | Topic | File |
@@ -166,5 +177,8 @@ Default hard limits: 3 subagents, 4-agent teams, 8 dynamic-workflow workers, 6 f
 | Evaluator rubric | [`evaluator-rubric.md`](evaluator-rubric.md) |
 | Agent teams | [`.agents/workflows/agent-teams.md`](.agents/workflows/agent-teams.md) |
 | Dynamic workflows | [`.agents/workflows/dynamic-workflows.md`](.agents/workflows/dynamic-workflows.md) |
+| Autonomous loops | [`.agents/workflows/autonomous-loops.md`](.agents/workflows/autonomous-loops.md) |
+| Slash commands | [`.agents/context/slash-commands.md`](.agents/context/slash-commands.md) |
+| Harness failure modes | [`.agents/context/failure-modes.md`](.agents/context/failure-modes.md) |
 | Template adoption | [`.agents/workflows/adoption.md`](.agents/workflows/adoption.md) |
 | Harness index | [`.agents/README.md`](.agents/README.md) |

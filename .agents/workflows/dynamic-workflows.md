@@ -138,6 +138,25 @@ High / Medium / Low — reason for uncertainty if applicable.
 
 ---
 
+## Reusable Subagent Roles
+
+Don't hand-write a worker prompt from scratch when a role already fits. The harness ships a roster of **reusable, model-tiered subagents** in [`../../.claude/agents/`](../../.claude/agents/) — assign one to a worker via its `agentType` and it arrives with the right system prompt and tier. Full roster, tiers, and a canonical pipeline are in [`../context/subagents.md`](../context/subagents.md).
+
+| Stage | Role | Tier |
+|---|---|---|
+| Discover / search | `scout` | haiku |
+| Plan / decompose | `planner` | opus |
+| Build / cover | `implementer`, `tester` | sonnet |
+| Diagnose | `debugger` | sonnet |
+| Document | `docs-writer` | sonnet |
+| Gate | `reviewer`, `safety-reviewer` | opus |
+| Synthesize | `integrator` | opus |
+| Evolve | `skill-smith`, `architect` | opus |
+
+Pin each worker to the **cheapest tier that does the job** — let `scout` (haiku) fan out wide for discovery, reserve opus for the review/architecture/synthesis stages. This keeps a many-worker run affordable without sacrificing the gates.
+
+---
+
 ## Reviewer Feedback Loop
 
 Every dynamic workflow must include a reviewer pass after all workers finish.

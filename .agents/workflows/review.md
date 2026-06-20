@@ -96,6 +96,23 @@ Work through these in order. A `BLOCK` verdict can be issued at any point.
 
 ---
 
+## The Six Review Gates
+
+Substantial changes pass through up to six gates, in order. Each is an independent lens; a `BLOCK` at any gate stops the change. Lightweight changes may collapse several gates into one pass — scale the gate set to the risk.
+
+| # | Gate | Checks | Driven by |
+|---|---|---|---|
+| 1 | **Implementation** | Correctness vs acceptance criteria; verification evidence; no regressions | `/review-10x` → [`opus-code-review`](../../.claude/skills/opus-code-review/SKILL.md) |
+| 2 | **Architecture** | Fits harness conventions; extensible; no needless complexity or duplication | `/architecture-review` |
+| 3 | **Test** | New behavior is covered; edge cases; tests not weakened to pass | `/test-loop` → [`test-debugging`](../../.claude/skills/test-debugging/SKILL.md) |
+| 4 | **Documentation** | Docs/context updated; links resolve; entry-file length limits respected | `/docs-loop` → [`documentation-maintenance`](../../.claude/skills/documentation-maintenance/SKILL.md) |
+| 5 | **Safety** | No secrets/attribution; destructive ops gated; loops bounded; authz intact | `/security-review` → [`security-review`](../../.claude/skills/security-review/SKILL.md) |
+| 6 | **Final integration** | Units merged cleanly; full verification green; state/handoff updated | `/review-10x` + `/final-handoff` |
+
+Each gate emits the Reviewer Output Format below (or, for an inline gate, the relevant section of it). Record gate results in [`../logs/verification.md`](../logs/verification.md). A change is "done" only when every applicable gate is `PASS`.
+
+---
+
 ## Reviewer Output Format
 
 ```md
@@ -146,12 +163,12 @@ Yes / No
 4. Reviewer issues verdict
 5. Critical and Major issues must be fixed
 6. Loop repeats until `Score: 10/10` and `Verdict: PASS`
-7. Maximum iterations: **6**
+7. Maximum iterations: **6** for the default implementation loop. Per-loop caps (e.g. `/review-loop` = 10, `/docs-loop` = 4) are defined in [`autonomous-loops.md`](autonomous-loops.md).
 
-After iteration 6:
+At the iteration cap:
 - Do not pass if Critical or Major issues remain
 - If only Minor/Nit issues remain, document them and create follow-up issues
-- Record final verdict regardless
+- Record final verdict regardless, and write a handoff
 
 ---
 
@@ -190,6 +207,8 @@ This audit expands the **five core subsystems** (Instructions, Tools, Environmen
 ## Related Files
 
 - [`../../evaluator-rubric.md`](../../evaluator-rubric.md) — detailed scoring rubric for all quality dimensions
+- [`autonomous-loops.md`](autonomous-loops.md) — bounded loops that wrap this review machinery
+- [`../context/slash-commands.md`](../context/slash-commands.md) — the review/gate commands (`/review-10x`, `/architecture-review`, `/security-review`)
 - [`../logs/verification.md`](../logs/verification.md) — where verification evidence is stored
 - [`../logs/progress.md`](../logs/progress.md) — sprint contracts and progress state
 - [`../logs/handover.md`](../logs/handover.md) — archived handovers
