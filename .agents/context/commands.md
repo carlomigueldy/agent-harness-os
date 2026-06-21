@@ -47,6 +47,13 @@ For most implementation tasks, run in this order before handing off:
 {{BUILD_CMD}}
 ```
 
+The canonical harness self-check — the same command CI runs — is:
+
+```bash
+bash scripts/verify-harness.sh        # human-readable; exits non-zero on any failure
+bash scripts/verify-harness.sh --json # machine-readable for agent parsing
+```
+
 > If any command is unavailable or fails due to environment gaps, document the failure in [../logs/verification.md](../logs/verification.md) and explain what risk remains.
 
 ## Notes
