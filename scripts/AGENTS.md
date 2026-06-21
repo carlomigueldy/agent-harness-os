@@ -9,6 +9,9 @@ Repo-level scripts. Today this is the harness's verification engine — the one 
 | Path | What it is |
 |---|---|
 | `verify-harness.sh` | Single source of verification truth: structure, length limits, JSON/YAML validity, link resolution, no-attribution, no-secrets, schema checks, shell syntax |
+| `provision.sh` | One-shot provisioning CLI: fills `{{PLACEHOLDER}}` tokens, detects the stack (Node/Python/Rust/Go/Ruby/PHP/Java/.NET/Elixir), validates with `verify-harness.sh`. Flags: `--config`, `--name`, `--owner`, `--repo`, `--dry-run`, `--non-interactive`. |
+| `sync-ledger.sh` | Reconcile `feature_list.json` with live GitHub Issue state; report drift or cautiously update with `--fix`. Local tool — never run by CI. |
+| `worktree.sh` | Safe worktree helper: create (sibling or in-repo with auto-exclude), list, remove, prune; validates branch prefix; copies env files safely |
 | `AGENTS.md` | This file |
 
 ## How This Directory Is Used
@@ -26,8 +29,12 @@ Repo-level scripts. Today this is the harness's verification engine — the one 
 ## Common Workflows
 
 - **Run verification:** `bash scripts/verify-harness.sh`.
+- **Provision a new repo:** `bash scripts/provision.sh --config harness.config` (non-interactive) or `bash scripts/provision.sh` (interactive). Preview first with `--dry-run`.
+- **Create a worktree:** `bash scripts/worktree.sh create feat/my-feature` (sibling, default) or `--in-repo` (created under `./worktrees/`, auto-excluded via `.git/info/exclude`); env files are copied safely.
+- **Remove a worktree:** `bash scripts/worktree.sh remove feat/my-feature` (refuses if uncommitted/unmerged; add `--force` to override).
 - **Add a check:** append a numbered `hdr "N. ..."` section using `pass`/`fail`/`warn`; update the count in the file header comment.
 - **Debug a CI failure of this script:** `/ci-debug`.
+- **Reconcile the feature ledger:** `bash scripts/sync-ledger.sh` (report drift only) or `bash scripts/sync-ledger.sh --fix` (cautious update). See also `/sync-ledger`.
 
 ## Commands
 

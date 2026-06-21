@@ -53,6 +53,7 @@ Static reference files. Read when you need to understand the project.
 | [`context/failure-modes.md`](context/failure-modes.md) | Harness failure-mode catalogue and recovery protocol |
 | [`context/troubleshooting.md`](context/troubleshooting.md) | Common environment/tooling failures and how to recover |
 | [`context/resources.md`](context/resources.md) | Useful external links, docs, dashboards, and references |
+| [`context/runtimes.md`](context/runtimes.md) | Runtime portability model — harness core vs runtime adapters (Claude Code, Codex, generic) |
 
 <!-- FILL: Add links to any additional context files specific to your project. -->
 
@@ -83,6 +84,7 @@ Step-by-step operational procedures. Follow these workflows when performing the 
 | [`workflows/dynamic-workflows.md`](workflows/dynamic-workflows.md) | When and how to create scriptable multi-subagent workflows |
 | [`workflows/worktree-sessions.md`](workflows/worktree-sessions.md) | Worktree creation, env file copying, cleanup |
 | [`workflows/workflow-improvement.md`](workflows/workflow-improvement.md) | When and how to propose harness or workflow improvements |
+| [`workflows/epic-delivery.md`](workflows/epic-delivery.md) | Epic-branch model, sub-issue auto-close via `epic-sync.yml`, and `feature_list.json` ledger sync |
 
 <!-- FILL: Add links to any project-specific workflow files. -->
 
@@ -157,6 +159,7 @@ See [`artifacts/README.md`](artifacts/README.md) for naming conventions and stor
 | Propose a new skill or workflow | [`proposals/README.md`](proposals/README.md) |
 | Write a session handover | [`workflows/handover.md`](workflows/handover.md), [`../session-handoff.md`](../session-handoff.md) |
 | Run verification | [`context/commands.md`](context/commands.md), [`logs/verification.md`](logs/verification.md) |
+| Use a non-Claude Code runtime | [`context/runtimes.md`](context/runtimes.md) · [`../.codex/README.md`](../.codex/README.md) |
 
 ---
 

@@ -15,6 +15,7 @@ GitHub-facing configuration for the harness: issue forms, the PR template, and t
 | `ISSUE_TEMPLATE/config.yml` | Issue chooser config + contact links |
 | `pull_request_template.md` | PR body template (summary, evidence, reviewer block, checklist) |
 | `workflows/ci.yml` | CI — runs `scripts/verify-harness.sh` on push/PR to `main` |
+| `workflows/epic-sync.yml` | Closes sub-issues referenced in a PR body when merged into an `epic/*` branch (fills GitHub's non-default-branch auto-close gap) |
 
 ## How This Directory Is Used
 

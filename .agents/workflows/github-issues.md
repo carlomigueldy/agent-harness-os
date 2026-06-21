@@ -233,4 +233,14 @@ gh pr status
 
 ---
 
+## Epic-Branch Sub-issue Closing & Ledger Sync
+
+When a sub-PR merges into an `epic/*` branch, GitHub does not auto-close the linked sub-issue — auto-close only fires on merges to the default branch. [`.github/workflows/epic-sync.yml`](../../.github/workflows/epic-sync.yml) fills this gap: it parses the merged PR body for standard closing keywords (`closes`, `fixes`, `resolves`, and their variants) and closes each referenced issue via the API, posting a comment linking the epic PR.
+
+`feature_list.json` is the system-of-record ledger for feature and task progress. Every task bound to a GH issue must set `github_issue` (and `epic` if the task belongs to an epic). Use [`scripts/sync-ledger.sh`](../../scripts/sync-ledger.sh) or [`/sync-ledger`](../../.claude/commands/sync-ledger.md) to detect and cautiously repair drift between the ledger and live issue state.
+
+Full model, rules, and sync cadence: [epic-delivery.md](epic-delivery.md).
+
+---
+
 _Part of the {{PROJECT_NAME}} Agent Harness OS — see the [harness index](../../.agents/README.md) and [AGENTS.md](../../AGENTS.md)._

@@ -6,6 +6,8 @@ Discovered skills, superpowers, MCP tools, and repo-specific scripts available i
 
 Use a skill when it improves **quality, speed, consistency, verification, or design**. Do not invoke a skill just for the sake of using one.
 
+> **Other runtimes:** In Claude Code, project skills live in `.claude/skills/`. Other runtimes reference the equivalent procedures directly in `.agents/workflows/`. See [`runtimes.md`](runtimes.md) for the full concept mapping.
+
 ## Harness-Level Skills (Always Available)
 
 | Skill / Superpower | When to Use |

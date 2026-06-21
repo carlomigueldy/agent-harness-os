@@ -62,7 +62,7 @@ VERIFY=1 bash init.sh   # also run lint/typecheck/tests/build (when configured)
 The harness ships as a template. Turn it into a live, project-specific harness with the one-time **[adoption workflow](.agents/workflows/adoption.md)**:
 
 1. Copy the harness files into your repo root.
-2. Find-replace the `{{PLACEHOLDER}}` values with your project's real values.
+2. Run `bash scripts/provision.sh` to fill `{{PLACEHOLDER}}` tokens automatically — detects the stack and validates. Use `--config harness.config` for non-interactive/agent use (copy `harness.config.example`, edit, run). See the [adoption workflow](.agents/workflows/adoption.md) for the manual fallback table.
 3. Fill the `<!-- FILL -->` sections, starting with [`commands.md`](.agents/context/commands.md) and [`environment.md`](.agents/context/environment.md).
 4. Run `bash init.sh` (then `VERIFY=1 bash init.sh`) to validate.
 5. Replace the example entries in [`feature_list.json`](feature_list.json) with real features.
@@ -85,11 +85,13 @@ It checks: required structure is present, entry files stay within length limits 
 - **Never commit secrets.** `.gitignore` guards env files; CI scans for leaks.
 - **Verification-first.** Don't claim done without evidence; if verification can't run, say why.
 - **Demo-driven completion** for user-facing work (screenshots, GIFs, CLI output in [`.agents/artifacts/`](.agents/artifacts/)).
-- **Worktree-first sessions** — isolate work in `../<repo>-worktrees/<branch>`; never stage copied env files.
+- **Worktree-first sessions** — isolate work in `../<repo>-worktrees/<branch>` (preferred sibling) or `./worktrees/<branch>` (in-repo, gitignored); use `bash scripts/worktree.sh`; never stage copied env files.
 - **GitHub-issue-driven** progress with epic/sub-issue/bug/feature forms and a PR template.
+- **Epic-branch sub-issue auto-close** — `.github/workflows/epic-sync.yml` closes sub-issues when sub-PRs merge into `epic/*` branches; `scripts/sync-ledger.sh` ([`/sync-ledger`](.claude/commands/sync-ledger.md)) reconciles `feature_list.json` with live GitHub Issue state.
 - **Right-sized orchestration** — single agent by default; subagents for isolated focus; agent teams for collaboration; dynamic workflows for repeatable audits/migrations. Don't force parallelism.
 - **Invokable, not just documented** — workflows are exposed as real Claude Code `/commands`, skills, and reusable model-tiered [subagents](.agents/context/subagents.md) under [`.claude/`](.claude/), with bounded autonomous loops (each with a hard iteration cap). See [`.agents/context/slash-commands.md`](.agents/context/slash-commands.md).
 - **Strict review loop** — a reviewer scores 1–10 and gives `PASS` / `REVISE` / `BLOCK`; autonomous loops require 10/10 with no Critical/Major issues (max 6 iterations).
+- **Runtime-agnostic core** — the `.agents/` doctrine works unchanged across Claude Code, Codex, and generic runtimes; adapters are thin wrappers. See [`.agents/context/runtimes.md`](.agents/context/runtimes.md) and the [`.codex/`](.codex/) adapter.
 
 See the [orchestration decision matrix](.agents/workflows/orchestration.md) and the [evaluator rubric](evaluator-rubric.md).
 
