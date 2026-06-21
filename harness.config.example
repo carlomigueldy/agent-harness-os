@@ -1,0 +1,90 @@
+# harness.config.example — Example configuration for non-interactive provisioning.
+#
+# Usage:
+#   cp harness.config.example harness.config
+#   # Edit harness.config with your project's real values.
+#   bash scripts/provision.sh --config harness.config
+#
+# Rules:
+#   - Lines beginning with # are comments (ignored).
+#   - Format is KEY=value  (no spaces around =, no shell quoting required).
+#   - Values may optionally be wrapped in single or double quotes.
+#   - This file must NOT contain secrets — it is safe to commit as-is.
+#   - Rename this file to harness.config before editing; harness.config is .gitignored.
+#
+# All keys are optional — any key not set here falls back to:
+#   (1) the matching --flag passed on the CLI, then
+#   (2) stack auto-detection (for command keys), then
+#   (3) an interactive prompt (unless --non-interactive is set).
+#
+# See: bash scripts/provision.sh --help for the full CLI reference.
+# See: .agents/workflows/adoption.md for the full Day 0 adoption checklist.
+
+# ── Project identity ──────────────────────────────────────────────────────────
+
+# Human-readable project name used in headings and titles.
+PROJECT_NAME=Acme Web
+
+# Broad category describing the project.
+# Examples: web app, API, CLI, mobile app, library, monorepo
+PROJECT_TYPE=web app
+
+# Primary programming language of the project.
+# Examples: TypeScript, Python, Go, Rust, Ruby, Java, PHP, Elixir, C#
+PRIMARY_LANGUAGE=TypeScript
+
+# Package manager used by the project.
+# Examples: pnpm, npm, yarn, bun, pip, poetry, uv, cargo, go, bundler, composer, mix, dotnet, maven, gradle
+PACKAGE_MANAGER=pnpm
+
+# Git default branch name.
+DEFAULT_BRANCH=main
+
+# Where the project is deployed.
+# Examples: Vercel, Docker, Fly.io, AWS, GCP, — (if not applicable)
+DEPLOYMENT_TARGET=Vercel
+
+# ── GitHub / repository identity ──────────────────────────────────────────────
+
+# GitHub organisation or personal account name (no @, no URL).
+GITHUB_OWNER=your-org
+
+# Repository name (no owner prefix, no .git suffix).
+REPO_NAME=acme-web
+
+# ── Commands ──────────────────────────────────────────────────────────────────
+# These are auto-detected from your stack when omitted.
+# Override here if detection produces the wrong command.
+
+# Install dependencies.
+INSTALL_CMD=pnpm install
+
+# Start the local development server.
+DEV_CMD=pnpm run dev
+
+# Produce a production build.
+BUILD_CMD=pnpm run build
+
+# Run the linter.
+LINT_CMD=pnpm run lint
+
+# Run the type checker.
+TYPECHECK_CMD=pnpm run typecheck
+
+# Run unit / integration tests.
+TEST_CMD=pnpm run test
+
+# Run end-to-end tests (leave blank if not applicable).
+E2E_CMD=pnpm run e2e
+
+# Run the code formatter.
+FORMAT_CMD=pnpm run format
+
+# ── Provisioner options ───────────────────────────────────────────────────────
+
+# Runtime adapter to activate.
+# Choices: claude (default) | codex | both | generic
+RUNTIME=claude
+
+# _Part of the {{PROJECT_NAME}} Agent Harness OS — see the harness index
+# (.agents/README.md) and AGENTS.md._
