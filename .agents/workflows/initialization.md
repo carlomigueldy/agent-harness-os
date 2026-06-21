@@ -45,7 +45,7 @@ Determine whether to:
 - Use an existing worktree for the target branch, or
 - Create a new worktree following the naming convention in [`./worktree-sessions.md`](./worktree-sessions.md)
 
-Default worktree directory pattern: `../<repo-name>-worktrees/<branch-name>`
+Default worktree directory pattern: `.agents/worktrees/<branch-name>` (in-repo, gitignored)
 
 Branch naming:
 ```

@@ -109,8 +109,9 @@ exclude_by_path() { grep -vE "^[^:]*(${EXCLUDE}):"; }
 
 # ── Single source of truth: directories that must never be scanned ────────────
 # Vendored/generated/build output plus nested git-worktree copies. Pruning the
-# basename 'worktrees' catches BOTH ./worktrees/ and ./.claude/worktrees/, which
-# is also a DETERMINISM fix: the verifier walks the filesystem, so a stray local
+# basename 'worktrees' catches ./worktrees/, ./.claude/worktrees/, AND the
+# preferred .agents/worktrees/; also a DETERMINISM fix: the verifier walks the
+# filesystem, so a stray local
 # worktree would otherwise inflate the scan counts.
 EXCLUDE_DIRS=( .git node_modules dist build vendor out .next .turbo .cache .vite coverage .venv venv __pycache__ worktrees )
 GREP_EXCLUDE_DIRS=()

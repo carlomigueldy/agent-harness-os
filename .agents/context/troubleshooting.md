@@ -88,7 +88,7 @@ git worktree list
 git worktree remove /path/to/old-worktree
 
 # Then create the new worktree
-git worktree add ../{{REPO_NAME}}-worktrees/<branch> -b <branch>
+git worktree add .agents/worktrees/<branch> -b <branch>
 ```
 
 ---

@@ -138,7 +138,7 @@ If iteration 6 is reached and Critical or Major issues remain, do not ship. Docu
 Each editing agent (Builder, Tester, Documenter) must have:
 
 - Assigned branch
-- Assigned worktree path (sibling dir: `../{{REPO_NAME}}-worktrees/<branch>`)
+- Assigned worktree path (in-repo: `.agents/worktrees/<branch>`)
 - Assigned files/modules (no overlapping edits)
 - Clear verification responsibility
 - Clear handover responsibility

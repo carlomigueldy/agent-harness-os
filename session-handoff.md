@@ -30,7 +30,7 @@ Harness initialized. No features have been implemented yet. Next session should 
 1. Read `AGENTS.md`, `CLAUDE.md`, and `claude-progress.md`
 2. Run `bash init.sh` to confirm baseline state
 3. Replace example entries in `feature_list.json` with real project features
-4. Create a worktree for the first feature: `git worktree add ../{{REPO_NAME}}-worktrees/feat/my-first-feature feat/my-first-feature`
+4. Create a worktree for the first feature: `git worktree add .agents/worktrees/feat/my-first-feature feat/my-first-feature`
 5. Open the first GitHub Issue and link it in `feature_list.json`
 
 ### Important Files

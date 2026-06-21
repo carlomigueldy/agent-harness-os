@@ -21,20 +21,20 @@ Follow [`.agents/workflows/initialization.md`](.agents/workflows/initialization.
 Every meaningful coding session uses a dedicated worktree. Full protocol: [`.agents/workflows/worktree-sessions.md`](.agents/workflows/worktree-sessions.md)
 
 ```bash
-# Create a worktree for a new task
-git worktree add ../{{REPO_NAME}}-worktrees/feat/my-feature feat/my-feature
+# Create a worktree for a new task (in-repo, gitignored)
+git worktree add .agents/worktrees/feat/my-feature feat/my-feature
 
 # Copy env files (never stage them)
-cp .env ../{{REPO_NAME}}-worktrees/feat/my-feature/.env
+cp .env .agents/worktrees/feat/my-feature/.env
 # Verify ignored
-git -C ../{{REPO_NAME}}-worktrees/feat/my-feature status
+git -C .agents/worktrees/feat/my-feature status
 ```
 
-Worktree directory pattern: `../{{REPO_NAME}}-worktrees/<branch-name>`
+Worktree directory pattern: `.agents/worktrees/<branch-name>` (in-repo, never outside the project dir).
 
 Context: [`.agents/context/worktrees.md`](.agents/context/worktrees.md)
 
-Use `bash scripts/worktree.sh create <branch>` for a safe, validated flow: it validates the branch prefix, creates the worktree, and copies env files. In-repo worktrees (under `./worktrees/`) are covered by `.gitignore`; arbitrary in-repo paths are auto-excluded via `.git/info/exclude`.
+Use `bash scripts/worktree.sh create <branch>` for a safe, validated flow: it validates the branch prefix, creates the worktree at `.agents/worktrees/<branch>`, and copies env files. `.agents/worktrees/` is gitignored; arbitrary hand-made in-repo paths are auto-excluded via `.git/info/exclude` (run `bash scripts/worktree.sh sync-exclude`). Use `--sibling` only if in-repo worktrees are impossible.
 
 ## Inspect Progress
 

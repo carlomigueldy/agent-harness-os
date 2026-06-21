@@ -47,7 +47,7 @@ One or two sentences: what is the overall status of the project right now?
 
 ### Worktree / Branch
 - Branch: `branch-name`
-- Worktree path: `../{{REPO_NAME}}-worktrees/branch-name` (or N/A)
+- Worktree path: `.agents/worktrees/branch-name` (or N/A)
 - Env file status: Copied / Missing / Not needed
 
 ### Commands Run

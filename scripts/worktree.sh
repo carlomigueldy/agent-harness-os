@@ -2,7 +2,7 @@
 # scripts/worktree.sh — safe git worktree helper for the Agent Harness OS
 #
 # Subcommands:
-#   create <branch> [--sibling|--in-repo] [--base <ref>]
+#   create <branch> [--in-repo|--sibling] [--base <ref>]
 #   list
 #   remove <branch> [--force]
 #   prune
@@ -23,11 +23,11 @@ usage() {
 Usage: bash scripts/worktree.sh <subcommand> [options]
 
 Subcommands:
-  create <branch> [--sibling|--in-repo] [--base <ref>]
+  create <branch> [--in-repo|--sibling] [--base <ref>]
       Create a new git worktree.
-      --sibling   (default) Place at ../<repo>-worktrees/<branch>
-      --in-repo             Place at ./worktrees/<branch>; path is added to
-                            .git/info/exclude if not already gitignored
+      --in-repo   (default) Place at .agents/worktrees/<branch> (gitignored)
+      --sibling             Place at ../<repo>-worktrees/<branch> (outside the
+                            repo; escape hatch only — prefer --in-repo)
       --base <ref>          Create branch from <ref> (default: HEAD)
 
   list
@@ -50,7 +50,7 @@ Branch name must begin with one of:
 
 Examples:
   bash scripts/worktree.sh create feat/my-feature
-  bash scripts/worktree.sh create harness/portability --in-repo --base main
+  bash scripts/worktree.sh create harness/portability --sibling --base main
   bash scripts/worktree.sh list
   bash scripts/worktree.sh remove feat/my-feature
   bash scripts/worktree.sh remove feat/old-wip --force
@@ -178,7 +178,7 @@ ensure_git_excluded() {
 # ── Subcommand: create ───────────────────────────────────────────────────────
 
 cmd_create() {
-  local branch="" mode="sibling" base="HEAD"
+  local branch="" mode="in-repo" base="HEAD"
 
   while [ $# -gt 0 ]; do
     case "$1" in
@@ -205,7 +205,7 @@ cmd_create() {
   if [ "$mode" = "sibling" ]; then
     worktree_path="${root}/../${repo}-worktrees/${branch}"
   else
-    worktree_path="${root}/worktrees/${branch}"
+    worktree_path="${root}/.agents/worktrees/${branch}"
   fi
 
   info "Creating worktree: branch='$branch', mode='$mode', base='$base'"
