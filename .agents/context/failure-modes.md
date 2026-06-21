@@ -40,7 +40,7 @@ Each failure is tagged by the subsystem it belongs to: **Instructions · Tools �
 | **Stray command file** | A non-command `.md` in `.claude/commands/` registers as a command | Move it to `.agents/context/`; remove from commands dir | Namespace rule (see [`slash-commands.md`](slash-commands.md)); `verify-harness.sh` check |
 | **Schema drift** | A command/skill missing required headings/frontmatter | Fix to schema; re-run verify | `verify-harness.sh` schema checks fail CI |
 | **Skill name ≠ dir** | Skill not discovered | Rename so `name` == directory | Verify-harness skill check |
-| **False-positive scans** | Verify fails on `node_modules`/build output | Scope the scan globs | Exclude vendored/build paths (issue #5) |
+| **False-positive scans** | Verify fails on `node_modules`/build output | Scope the scan globs | Single-sourced `EXCLUDE_DIRS` prunes vendored/build/worktree paths — **resolved & regression-tested** by `scripts/test-verify-harness.sh` (issue #5) |
 
 ## Environment failures
 

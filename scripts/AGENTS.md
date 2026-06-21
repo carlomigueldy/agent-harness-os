@@ -8,7 +8,8 @@ Repo-level scripts. Today this is the harness's verification engine — the one 
 
 | Path | What it is |
 |---|---|
-| `verify-harness.sh` | Single source of verification truth: structure, length limits, JSON/YAML validity, link resolution, no-attribution, no-secrets, schema checks, shell syntax |
+| `verify-harness.sh` | Single source of verification truth: structure, length limits, JSON/YAML validity, link resolution, no-attribution, no-secrets, schema checks, shell syntax. Flags: `--json` (machine-readable), `--scans-only` (content scans only), `--help`; `HARNESS_VERIFY_ROOT` overrides the scan root |
+| `test-verify-harness.sh` | Hermetic regression test for `verify-harness.sh` — drives `--scans-only` against throwaway fixture roots to prove the exclude-dir list holds (closes bug #5). Run by CI after the harness verification step |
 | `provision.sh` | One-shot provisioning CLI: fills `{{PLACEHOLDER}}` tokens, detects the stack (Node/Python/Rust/Go/Ruby/PHP/Java/.NET/Elixir), validates with `verify-harness.sh`. Flags: `--config`, `--name`, `--owner`, `--repo`, `--dry-run`, `--non-interactive`. |
 | `sync-ledger.sh` | Reconcile `feature_list.json` with live GitHub Issue state; report drift or cautiously update with `--fix`. Local tool — never run by CI. |
 | `worktree.sh` | Safe worktree helper: create (sibling or in-repo with auto-exclude), list, remove, prune; validates branch prefix; copies env files safely |
@@ -50,7 +51,7 @@ The script validates itself by running clean on a healthy tree. `shellcheck --se
 
 ## Known Risks
 
-- Scans that don't exclude `node_modules`/build output produce false positives locally (see issue #5). New content scans must scope their globs.
+- Scans that don't exclude `node_modules`/build output produce false positives locally (issue #5 — **RESOLVED**: exclude-dir list is single-sourced via `EXCLUDE_DIRS` and regression-tested by `test-verify-harness.sh`). New content scans must still derive their pruning from `EXCLUDE_DIRS`.
 - A check that prints but doesn't increment `FAILED` will pass CI silently — always use `fail()`.
 
 ## Recent Decisions

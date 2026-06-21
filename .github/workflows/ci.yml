@@ -31,6 +31,9 @@ jobs:
       - name: Run harness verification
         run: bash scripts/verify-harness.sh
 
+      - name: Regression test (verify-harness exclusions / bug #5)
+        run: bash scripts/test-verify-harness.sh
+
       - name: Shellcheck (informational)
         continue-on-error: true
         run: shellcheck --severity=error init.sh scripts/*.sh

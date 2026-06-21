@@ -34,7 +34,8 @@ Each entry follows this structure:
 
 <!-- FILL: Move resolved entries here with a "Resolved: YYYY-MM-DD" note. This preserves history without cluttering the active list. -->
 
-— none yet —
+### [CI] verify-harness.sh false positives on node_modules/build output — Resolved: 2026-06-21
+- The content scans (links, attribution, secrets) walked vendored/generated dirs and nested git-worktree copies, producing false positives and a nondeterministic link count. Fixed by single-sourcing the exclude-dir list (now also prunes `worktrees`, `.turbo`, `.cache`, `.vite`, `out`). Regression-tested by `scripts/test-verify-harness.sh`; tracked by issue #5.
 
 ---
 
