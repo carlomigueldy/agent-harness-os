@@ -28,6 +28,23 @@ Log decisions about: architecture, tooling, framework conventions, testing strat
 
 <!-- FILL: Append new entries below in reverse-chronological order (newest first). -->
 
+## 2026-06-21 — Portability & delivery hardening: runtime adapters, provisioning CLI, epic/ledger sync, worktree ignore
+
+### Context
+Four hardening goals: (1) the harness was Claude-Code-centric and needed to be portable across agent runtimes (Codex and other open-source harnesses) without duplicating doctrine; (2) adoption was a manual, token-expensive find-replace; (3) GitHub only auto-closes issues on merges to the *default* branch, so sub-issues merged into an epic branch stayed open, and agent-task↔issue bindings were not reconciled with the `feature_list.json` ledger; (4) in-repo git worktrees (e.g. `./claire`, `.claude/worktrees/`) could be accidentally committed.
+
+### Decision
+Keep `.agents/` the single source of doctrine and add THIN runtime adapters that point back into it: a documented portability model in `.agents/context/runtimes.md` plus a `.codex/` adapter (Codex reads root `AGENTS.md` natively; `.codex/prompts/` holds optional thin wrappers). Ship `scripts/provision.sh` to automate adoption (placeholder fill + stack detect + verify) with a safe `--dry-run`/non-interactive path. Close the epic gap with a guarded `.github/workflows/epic-sync.yml` (closes referenced sub-issues only on merged PRs into `epic/*`, never on `main`) and `scripts/sync-ledger.sh` to reconcile the ledger with issue state; document the model + the status↔issue contract in `.agents/workflows/epic-delivery.md` and expose `/sync-ledger`. Harden `.gitignore` for in-repo worktrees and add `scripts/worktree.sh` whose `sync-exclude` catch-all excludes any in-repo worktree (incl. arbitrary names) via `.git/info/exclude`. Built via a dynamic workflow (4 parallel Sonnet implementers on disjoint files → Sonnet integrator on shared files → Opus reviewer + safety-reviewer 10/10 gate with a Sonnet fixer), landing as a single PR with a second Opus review on the PR diff.
+
+### Alternatives Considered
+- Mirror every `.claude/command` as a `.codex/prompt` — rejected: heavy duplication, the harness's own anti-pattern; ship one example + a generatable contract instead.
+- Blanket-ignore arbitrary root dirs in tracked `.gitignore` to cover `./claire` — rejected: dangerous (could hide real source dirs); use a conventional `/worktrees/` ignore + per-path `.git/info/exclude` via the helper.
+- Per-agent worktrees for the parallel implementers — rejected: the four workstreams partition cleanly into disjoint files, so ownership discipline + a single integrator avoids merge conflicts on the tight-headroom entry files at lower cost.
+- Create GitHub epic + sub-issues to dogfood the workflow on the template repo — rejected: reaffirms decision 2026-06-20 — the issue workflow is instructional content *for adopters*; tracking issues would pollute the template. Track via in-repo state + a single PR.
+
+### Consequences
+- The harness now advertises and supports multiple runtimes; adopters can provision in one command; epic delivery and the ledger stay in sync; in-repo worktrees can't leak into commits. New automation (scripts + a GitHub Action) widens the maintenance surface — mitigated by the safety review, schema-enforcing CI (`verify-harness` 18/0), and live tests. `feature_list.json` stays a clean reusable example (gains an optional `epic` field).
+
 ## 2026-06-20 — Reusable, model-tiered subagent roster in `.claude/agents/`
 
 ### Context

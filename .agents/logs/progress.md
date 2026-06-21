@@ -13,18 +13,18 @@ See also: [../../claude-progress.md](../../claude-progress.md) for the root-leve
 | Field | Value |
 |---|---|
 | Phase | Implementation |
-| Current Task | Agent-native harness hardening (commands, skills, loops, context, review gates, CI) |
-| Branch | `harness/agent-native-hardening` (in-place epic branch) |
-| Worktree Path | N/A — in-place branch (see decision 2026-06-20) |
-| Last Verification | `scripts/verify-harness.sh` (extended this sprint) |
-| Last Demo Artifact | verify-harness.sh output (this sprint) |
+| Current Task | Portability & delivery hardening (runtime-agnostic, provisioning CLI, epic/ledger sync, worktree gitignore) |
+| Branch | `harness/portability-hardening` (in-place epic branch) |
+| Worktree Path | N/A — in-place branch (see decision 2026-06-21) |
+| Last Verification | `scripts/verify-harness.sh` → 18/18 pass, 0 fail (2026-06-21) |
+| Last Demo Artifact | verify-harness 18/0 + live `worktree.sh sync-exclude` ./claire test (2026-06-21) |
 | Last Handover | See `../../session-handoff.md` |
 
 ---
 
 ## In Progress
 
-- Agent-native harness hardening — see Active Sprint Contract below. Tracked in-repo (no GitHub tracking issues; the issue workflow is template content).
+- Portability & delivery hardening — see Active Sprint Contract below. Built by a 4-agent Sonnet fleet + Opus 10/10 review loop; ready for PR. Tracked in-repo (no GitHub tracking issues; the issue workflow is template content for adopters).
 
 ---
 
@@ -32,6 +32,8 @@ See also: [../../claude-progress.md](../../claude-progress.md) for the root-leve
 
 <!-- FILL: Append completed tasks in reverse-chronological order. -->
 
+- 2026-06-21 — Portability & delivery hardening (runtime-agnostic + provisioning CLI + epic/ledger sync + worktree gitignore). Reviewer PASS 10/10, safety PASS; verify-harness 18/0. PR pending.
+- 2026-06-20 — Agent-native harness hardening (invokable commands/skills/subagents, autonomous loops, recursive context, review gates, schema CI). Reviewer PASS 10/10; merged (PR #8).
 - 2026-06-03 — Harden harness template repo (README + self-verifying CI). Reviewer PASS 10/10; merged (PR #4).
 
 ---
@@ -131,9 +133,51 @@ Clear definition of done.
 
 ### Active Sprint Contract
 
+## Sprint Contract — Portability & delivery hardening
+
+**Status:** Implemented; Opus review PASS 10/10 + safety PASS; verify-harness 18/0. Ready for PR (2026-06-21).
+
+### Goal
+Make the harness portable across agent runtimes (Claude Code + Codex + generic) without duplicating doctrine; automate adoption with a provisioning CLI; close the epic-branch sub-issue auto-close gap and bind agent tasks to the `feature_list.json` ledger; guarantee in-repo worktree dirs are never committed.
+
+### Scope
+NEW: `.agents/context/runtimes.md`, `.codex/` adapter (AGENTS.md/README.md/prompts/build-loop.md), `scripts/provision.sh`, `harness.config.example`, `.github/workflows/epic-sync.yml`, `scripts/sync-ledger.sh`, `.agents/workflows/epic-delivery.md`, `.claude/commands/sync-ledger.md`, `scripts/worktree.sh`. EDIT (owned): `init.sh` (6 new stack detectors), `.gitignore` (in-repo worktree block), `feature_list.json` (`epic` field). Integrator edits to shared entry/index docs.
+
+### Non-goals
+Filling template placeholders (that is adoption); generating the full Codex prompt set (one example only); creating GitHub tracking issues on the template repo; project-specific stack content.
+
+### Acceptance Criteria
+- `runtimes.md` + usable `.codex/` adapter; no doctrine duplication; stack detection broadened to 9 ecosystems.
+- `provision.sh` automates placeholder fill + stack detect + verify, with safe `--dry-run`, non-interactive path, refuse-to-clobber, no `eval` of config.
+- `epic-sync.yml` closes sub-issues on epic-branch PR merge (guarded off `main`, least-privilege, injection-safe); `sync-ledger.sh` reconciles ledger↔issues and degrades without `gh`; `/sync-ledger` conforms to schema; `epic-delivery.md` documents the contract; `feature_list.json` stays a clean example.
+- In-repo worktrees ignored incl. arbitrary names via `worktree.sh sync-exclude`; sibling/in-repo convention reconciled.
+- verify-harness 18/0; AGENTS.md ≤ 200, CLAUDE.md ≤ 250; links resolve; no attribution; no secrets; scripts pass `bash -n`.
+
+### Verification Plan
+- `bash scripts/verify-harness.sh` → 18/0; `bash -n` all scripts; `bash init.sh`; `provision.sh --dry-run` (no mutation); `sync-ledger.sh` (graceful); live `worktree.sh sync-exclude` ./claire test.
+
+### Orchestration Mode
+- Dynamic workflow: 4 parallel Sonnet implementers (disjoint files) → 1 Sonnet integrator (shared files) → Opus reviewer + safety-reviewer gate with Sonnet fixer (10/10 loop, max 4). Single PR; second Opus review loop on the PR diff before merge.
+
+### Parallelization Assessment
+- Parallel-safe: implementers own strictly disjoint file sets; shared entry/index files edited only by the sequential integrator.
+
+### Risk Level
+- Medium (new automation scripts + a GitHub Action; mitigated by safety review + schema CI + live tests).
+
+### Model Tier
+- Sonnet for implementation/integration/fixes; Opus for review + safety gates.
+
+### Done Means
+- Acceptance criteria met, verify-harness green, logs updated, single PR opened + PR-diff Opus review PASS, merged into `main`.
+
+---
+
+### Completed Sprint Contracts
+
 ## Sprint Contract — Agent-native harness hardening
 
-**Status:** In progress (2026-06-20).
+**Status:** Complete — shipped 2026-06-20 (PR #8); reviewer PASS 10/10.
 
 ### Goal
 Turn described workflows into invokable capability: real `.claude/commands/` slash commands and `.claude/skills/` project skills, a formal `autonomous-loops` system, recursive context maps, strict Opus review gates, and schema-validating CI — reconciled onto `.agents/` (no duplicate `docs/` tree).
@@ -191,8 +235,6 @@ A parallel `docs/` tree; project-specific stack content; weakening existing cons
 - All acceptance criteria met, verify-harness.sh green, logs + `feature_list.json` (no template pollution) updated, handover written, single PR opened.
 
 ---
-
-### Completed Sprint Contracts
 
 ## Sprint Contract — Harden harness template repo (README + self-verifying CI)
 
