@@ -43,6 +43,11 @@ Omit any subsection that has no entries for that date. Every completed task must
 
 <!-- FILL: Append new dated entries below in reverse-chronological order (newest first). -->
 
+## 2026-06-21
+
+### Added
+- **`parallel-epic-delivery` project skill** — `.claude/skills/parallel-epic-delivery/SKILL.md` (skills now total 13). A stack-agnostic orchestration pattern for shipping N independent epics concurrently: one git worktree + Workflow lane each (Sonnet implements, Opus drives a strict 10/10 review loop, then PR + adversarial PR-diff review), followed by integration-verification of the *combined* tree and dependency-ordered merges that keep `main` green after every step. Composes the existing single-lane loops (`autonomous-loop-design`, `opus-code-review`) into a fan-out and adds the one thing per-lane loops can't: verification of the merged result before anything lands. Indexed in [`../context/skills.md`](../context/skills.md).
+
 ## 2026-06-20
 
 ### Added
