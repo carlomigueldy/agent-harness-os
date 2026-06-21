@@ -91,7 +91,7 @@ body:
       description: "Branch name, worktree path, and env-file status for this sub-issue."
       placeholder: |
         - Branch: feat/<short-description>
-        - Worktree: ../<repo>-worktrees/feat/<short-description>
+        - Worktree: .agents/worktrees/feat/<short-description>
         - Env files: copy from default worktree; never stage
     validations:
       required: false

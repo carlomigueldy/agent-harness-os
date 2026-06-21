@@ -31,20 +31,22 @@ Default branch: `{{DEFAULT_BRANCH}}`
 
 ## Worktree Directory Naming
 
-**Preferred:** sibling directories outside the repo tree (nothing to ignore):
+**Convention:** in-repo worktrees under `.agents/worktrees/` — inside the project dir, never a sibling outside it:
 
 ```
-../{{REPO_NAME}}-worktrees/<branch-name>
+.agents/worktrees/<branch-name>
 ```
 
 **Example:**
 
 ```
-../my-app-worktrees/feat/user-auth
-../my-app-worktrees/fix/null-payment-response
+.agents/worktrees/feat/user-auth
+.agents/worktrees/fix/null-payment-response
 ```
 
-**In-repo option:** when tooling (e.g. Claude Code via `.claude/worktrees/`) requires worktrees inside the repo, use `./worktrees/<branch-name>`. In-repo paths under `/worktrees/` are covered by `.gitignore`, and `scripts/worktree.sh create --in-repo` also adds the path to `.git/info/exclude` (local, per-clone, never committed). For an arbitrary in-repo name created by hand (e.g. `git worktree add ./claire`), run `bash scripts/worktree.sh sync-exclude` — it adds every in-repo worktree to `.git/info/exclude` so it can never be staged or committed.
+`.agents/worktrees/` is gitignored (repo-root-anchored in [`.gitignore`](../../.gitignore)), so worktree contents can never be staged or committed. `scripts/worktree.sh create` places worktrees here by default. For an arbitrary in-repo name created by hand (e.g. `git worktree add ./claire`), run `bash scripts/worktree.sh sync-exclude` — it adds every in-repo worktree to `.git/info/exclude` so it can never be staged or committed.
+
+**Escape hatch:** if in-repo worktrees are impossible (e.g. a tool that refuses nested worktrees), a sibling directory outside the tree — `../{{REPO_NAME}}-worktrees/<branch-name>` — works and needs no ignore entry, via `scripts/worktree.sh create --sibling`. Prefer the in-repo convention.
 
 > TEMPLATE NOTE: If the project uses a different worktree convention, document it here and update [../workflows/worktree-sessions.md](../workflows/worktree-sessions.md) to match.
 
@@ -53,25 +55,25 @@ Default branch: `{{DEFAULT_BRANCH}}`
 **Recommended:** use the helper script — it validates the branch prefix, creates the worktree, and copies env files safely:
 
 ```bash
-# Sibling (preferred, outside repo tree):
+# In-repo at .agents/worktrees/<branch> (default, gitignored):
 bash scripts/worktree.sh create feat/my-feature
-
-# In-repo (./worktrees/<branch>, auto-excluded via .git/info/exclude):
-bash scripts/worktree.sh create feat/my-feature --in-repo
 
 # From a specific base ref:
 bash scripts/worktree.sh create feat/my-feature --base main
+
+# Escape hatch — sibling outside the repo (only if in-repo is impossible):
+bash scripts/worktree.sh create feat/my-feature --sibling
 ```
 
 **Manual fallback (if the helper is unavailable):**
 
 ```bash
 # From the repo root:
-git worktree add ../{{REPO_NAME}}-worktrees/<branch-name> -b <branch-name>
+git worktree add .agents/worktrees/<branch-name> -b <branch-name>
 
 # Then copy env files (see Environment section below)
 # Then install dependencies if needed
-cd ../{{REPO_NAME}}-worktrees/<branch-name>
+cd .agents/worktrees/<branch-name>
 {{INSTALL_CMD}}
 ```
 
@@ -113,7 +115,7 @@ Before starting implementation in a worktree, log this block in `../../session-h
 `<branch-name>`
 
 ### Worktree Path
-`../{{REPO_NAME}}-worktrees/<branch-name>`
+`.agents/worktrees/<branch-name>`
 
 ### Base Branch
 `{{DEFAULT_BRANCH}}`
@@ -130,7 +132,7 @@ Clean / dirty — explain if dirty.
 Before writing any code, confirm the worktree is functional:
 
 ```bash
-cd ../{{REPO_NAME}}-worktrees/<branch-name>
+cd .agents/worktrees/<branch-name>
 git status          # should be clean
 {{LINT_CMD}}        # should pass
 {{TYPECHECK_CMD}}   # should pass
@@ -143,7 +145,7 @@ Once the branch is merged or abandoned:
 
 ```bash
 # From the repo root:
-git worktree remove ../{{REPO_NAME}}-worktrees/<branch-name>
+git worktree remove .agents/worktrees/<branch-name>
 git branch -d <branch-name>   # only after merge
 ```
 

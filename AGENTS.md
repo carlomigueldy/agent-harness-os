@@ -127,10 +127,10 @@ Epic-branch delivery + ledger sync: [`.agents/workflows/epic-delivery.md`](.agen
 Every meaningful coding session should use a dedicated git worktree.
 
 - Branch naming: `feat/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`, `harness/`
-- Worktree location: `../{{REPO_NAME}}-worktrees/<branch-name>`
+- Worktree location: `.agents/worktrees/<branch-name>` (in-repo, gitignored; never outside the project dir)
 - Full workflow: [`.agents/workflows/worktree-sessions.md`](.agents/workflows/worktree-sessions.md)
 - Worktree context: [`.agents/context/worktrees.md`](.agents/context/worktrees.md)
-- Helper: `bash scripts/worktree.sh create <branch>` — validates prefix, creates, copies env files; `--in-repo` auto-excludes via `.git/info/exclude`
+- Helper: `bash scripts/worktree.sh create <branch>` — validates prefix, creates at `.agents/worktrees/<branch>` (default, gitignored), copies env files; `--sibling` is the escape hatch
 
 ## Orchestration Mode Selection
 

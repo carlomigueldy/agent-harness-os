@@ -505,13 +505,13 @@ harness/<short-description>
 
 ## Worktree Directory Naming
 
-Prefer a predictable sibling directory:
+Prefer an in-repo directory under `.agents/worktrees/` (gitignored), inside the project dir:
 
 ```txt
-../<repo-name>-worktrees/<branch-name>
+.agents/worktrees/<branch-name>
 ```
 
-or another existing project convention if present.
+A sibling directory outside the repo (`../<repo-name>-worktrees/<branch-name>`) is an escape hatch if in-repo worktrees are impossible.
 
 ## Environment File Copying
 
@@ -1396,7 +1396,7 @@ Before parallelizing, create a parallelization assessment:
 
 | Workstream | Parallel Safe? | Reason | Dependencies | Conflict Risk | Worktree |
 |---|---:|---|---|---|---|
-| Task A | Yes | Separate files | None | Low | `../repo-worktrees/task-a` |
+| Task A | Yes | Separate files | None | Low | `.agents/worktrees/task-a` |
 | Task B | No | Depends on Task A | Task A | High | N/A |
 ```
 

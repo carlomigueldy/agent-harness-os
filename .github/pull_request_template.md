@@ -75,7 +75,7 @@ _No demo captured — reason: <!-- explain if no evidence exists -->_
 <!-- Describe the worktree used for this PR, if applicable. -->
 
 - Branch: `<!-- branch name -->`
-- Worktree path: `<!-- ../{{REPO_NAME}}-worktrees/... or N/A -->`
+- Worktree path: `<!-- .agents/worktrees/... or N/A -->`
 - Env files: `<!-- copied / not needed / missing — explain -->`
 
 ## Checklist

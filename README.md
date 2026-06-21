@@ -85,7 +85,7 @@ It checks: required structure is present, entry files stay within length limits 
 - **Never commit secrets.** `.gitignore` guards env files; CI scans for leaks.
 - **Verification-first.** Don't claim done without evidence; if verification can't run, say why.
 - **Demo-driven completion** for user-facing work (screenshots, GIFs, CLI output in [`.agents/artifacts/`](.agents/artifacts/)).
-- **Worktree-first sessions** — isolate work in `../<repo>-worktrees/<branch>` (preferred sibling) or `./worktrees/<branch>` (in-repo, gitignored); use `bash scripts/worktree.sh`; never stage copied env files.
+- **Worktree-first sessions** — isolate work in `.agents/worktrees/<branch>` (in-repo, gitignored, never outside the project dir; `--sibling` is the escape hatch); use `bash scripts/worktree.sh`; never stage copied env files.
 - **GitHub-issue-driven** progress with epic/sub-issue/bug/feature forms and a PR template.
 - **Epic-branch sub-issue auto-close** — `.github/workflows/epic-sync.yml` closes sub-issues when sub-PRs merge into `epic/*` branches; `scripts/sync-ledger.sh` ([`/sync-ledger`](.claude/commands/sync-ledger.md)) reconciles `feature_list.json` with live GitHub Issue state.
 - **Right-sized orchestration** — single agent by default; subagents for isolated focus; agent teams for collaboration; dynamic workflows for repeatable audits/migrations. Don't force parallelism.

@@ -31,17 +31,19 @@ Keep names lowercase, hyphen-separated, and under 40 characters.
 
 ## Worktree Directory Convention
 
-Use a predictable sibling directory:
+Use an in-repo directory under `.agents/worktrees/` — inside the project dir, never a sibling outside it:
 
 ```
-../{{REPO_NAME}}-worktrees/<branch-name>
+.agents/worktrees/<branch-name>
 ```
 
 Example:
 
 ```
-../my-app-worktrees/feat/auth-refresh-token
+.agents/worktrees/feat/auth-refresh-token
 ```
+
+`.agents/worktrees/` is gitignored, so worktree contents are never staged. If in-repo worktrees are impossible, the escape hatch is a sibling dir outside the tree (`../{{REPO_NAME}}-worktrees/<branch-name>`) via `scripts/worktree.sh create --sibling`.
 
 <!-- FILL: If the project uses a different worktree convention, document it here -->
 
@@ -52,14 +54,14 @@ Example:
 **Recommended:** use `scripts/worktree.sh` — validates the branch prefix, creates the worktree, and copies env files following the rules in [Copying Environment Files Safely](#copying-environment-files-safely):
 
 ```sh
-# Sibling (preferred, outside the repo tree):
+# In-repo at .agents/worktrees/<branch> (default, gitignored):
 bash scripts/worktree.sh create feat/my-feature
-
-# In-repo (auto-excluded via .git/info/exclude if not already gitignored):
-bash scripts/worktree.sh create feat/my-feature --in-repo
 
 # From a specific base ref:
 bash scripts/worktree.sh create feat/my-feature --base main
+
+# Escape hatch — sibling outside the repo (only if in-repo is impossible):
+bash scripts/worktree.sh create feat/my-feature --sibling
 
 # List all worktrees:
 bash scripts/worktree.sh list
@@ -69,7 +71,7 @@ bash scripts/worktree.sh list
 
 ```sh
 # From the repo root
-git worktree add ../{{REPO_NAME}}-worktrees/<branch-name> -b <branch-name>
+git worktree add .agents/worktrees/<branch-name> -b <branch-name>
 
 # Verify it was created
 git worktree list
@@ -136,7 +138,7 @@ Before implementation starts, record the session in [../logs/progress.md](../log
 `branch-name`
 
 ### Worktree Path
-`../{{REPO_NAME}}-worktrees/<branch-name>`
+`.agents/worktrees/<branch-name>`
 
 ### Base Branch
 `{{DEFAULT_BRANCH}}`
@@ -203,7 +205,7 @@ bash scripts/worktree.sh prune                         # remove stale metadata
 
 ```sh
 # Remove the worktree
-git worktree remove ../{{REPO_NAME}}-worktrees/<branch-name>
+git worktree remove .agents/worktrees/<branch-name>
 
 # Optionally prune stale worktree references
 git worktree prune
@@ -240,8 +242,8 @@ When an agent team assigns editing roles to multiple agents:
 - Worktree paths must be distinct:
 
   ```
-  ../{{REPO_NAME}}-worktrees/feat/auth-builder
-  ../{{REPO_NAME}}-worktrees/feat/auth-tester
+  .agents/worktrees/feat/auth-builder
+  .agents/worktrees/feat/auth-tester
   ```
 
 - File ownership must be agreed before any agent begins editing.

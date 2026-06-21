@@ -74,17 +74,19 @@ Thumbs.db
 !.agents/artifacts/.gitkeep
 
 # ── Git worktrees ────────────────────────────────────────────────────────
-# PREFERRED convention: sibling directories OUTSIDE the repo tree, e.g.
-#   ../<repo>-worktrees/<branch-name>
-# These live outside the tree, so no .gitignore entry is needed for them.
-#
-# IN-REPO worktrees: when tooling or Claude Code creates a worktree inside
-# the repo, the directory must be ignored. Covered base dirs (repo-root-
-# anchored so only top-level dirs are matched):
+# PREFERRED convention: in-repo worktrees under .agents/worktrees/<branch>.
+# They live INSIDE the repo (never outside the project dir), so the directory
+# must be ignored — done here, repo-root-anchored:
+/.agents/worktrees/
+# Legacy / alternative in-repo base dirs, also ignored:
 /worktrees/
 /.worktrees/
 # Claude Code's own in-repo worktree directory is also ignored:
 # (see the Claude Code project config section below for .claude/worktrees/)
+#
+# ESCAPE HATCH: a sibling directory OUTSIDE the repo tree
+# (../<repo>-worktrees/<branch-name>) needs no entry here, but the project
+# convention is the in-repo location above — prefer it.
 #
 # ARBITRARY in-repo worktree names (e.g. a dir named /claire/ or /sandbox/):
 # add the path to .git/info/exclude — local, per-clone, never committed.

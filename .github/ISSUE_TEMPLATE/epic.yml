@@ -164,7 +164,7 @@ body:
       description: "Branch naming, worktree path, and env-file handling guidance for this epic."
       placeholder: |
         - Branch: feat/<short-description>
-        - Worktree: ../<repo>-worktrees/feat/<short-description>
+        - Worktree: .agents/worktrees/feat/<short-description>
         - Env files: copy from default branch worktree; never stage
     validations:
       required: false

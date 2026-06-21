@@ -31,7 +31,7 @@ Repo-level scripts. Today this is the harness's verification engine — the one 
 
 - **Run verification:** `bash scripts/verify-harness.sh`.
 - **Provision a new repo:** `bash scripts/provision.sh --config harness.config` (non-interactive) or `bash scripts/provision.sh` (interactive). Preview first with `--dry-run`.
-- **Create a worktree:** `bash scripts/worktree.sh create feat/my-feature` (sibling, default) or `--in-repo` (created under `./worktrees/`, auto-excluded via `.git/info/exclude`); env files are copied safely.
+- **Create a worktree:** `bash scripts/worktree.sh create feat/my-feature` (in-repo at `.agents/worktrees/<branch>`, default, gitignored) or `--sibling` (escape hatch, outside the repo); env files are copied safely.
 - **Remove a worktree:** `bash scripts/worktree.sh remove feat/my-feature` (refuses if uncommitted/unmerged; add `--force` to override).
 - **Add a check:** append a numbered `hdr "N. ..."` section using `pass`/`fail`/`warn`; update the count in the file header comment.
 - **Debug a CI failure of this script:** `/ci-debug`.
