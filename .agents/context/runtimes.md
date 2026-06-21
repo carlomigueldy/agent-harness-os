@@ -45,7 +45,7 @@ To add a new runtime adapter (e.g. `.gemini/`, `.cursor/`):
 
 ## Activating a Runtime Adapter at Adoption Time
 
-Both adapters (`.claude/` and `.codex/`) ship with the template as tracked directories. The `--runtime` flag on `scripts/provision.sh` **records which runtime is active** for the project and surfaces a matching next-step hint in the provisioner summary — it does not create, scaffold, or remove any adapter directory.
+Both adapters (`.claude/` and `.codex/`) ship with the template as tracked directories. The `--runtime` flag on `scripts/provision.sh` selects which adapter you intend to use and surfaces a matching next-step hint in the provisioner summary — it does not persist the choice to a file, nor create, scaffold, or remove any adapter directory.
 
 ```bash
 bash scripts/provision.sh --runtime codex   # record Codex as the active runtime; shows a .codex/ setup hint

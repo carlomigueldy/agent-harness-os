@@ -636,7 +636,8 @@ echo "  3. Replace example features in feature_list.json with real ones."
 echo "  4. Reset claude-progress.md and session-handoff.md to project state."
 echo "  5. Run: bash init.sh  (then VERIFY=1 bash init.sh) to confirm setup."
 if [[ "$OPT_RUNTIME" == "codex" || "$OPT_RUNTIME" == "both" ]]; then
-  echo "  6. Codex runtime: add .codex/AGENTS.md pointing agents at .agents/ docs."
+  echo "  6. Codex runtime: the .codex/ adapter ships with the harness — read"
+  echo "       .codex/README.md and .agents/context/runtimes.md to wire it up."
 fi
 echo ""
 ok "scripts/provision.sh done."
