@@ -34,7 +34,8 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .pytest_cache/
-target/            # Rust / JVM build output
+# Rust / JVM build output
+target/
 
 # ── Build & cache output ──────────────────────────────────────────────
 dist/
@@ -53,7 +54,8 @@ coverage/
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
-/logs/                 # root-level runtime log dir only
+# root-level runtime log dir only
+/logs/
 !.agents/logs/         # harness logs are tracked state — never ignore them
 
 # ── Editor & OS ───────────────────────────────────────────────────────
@@ -71,8 +73,29 @@ Thumbs.db
 !.agents/artifacts/README.md
 !.agents/artifacts/.gitkeep
 
-# ── Git worktrees (created as sibling dirs by convention) ──────────────
-# Worktrees live in ../<repo>-worktrees/<branch>, outside this tree.
+# ── Git worktrees ────────────────────────────────────────────────────────
+# PREFERRED convention: sibling directories OUTSIDE the repo tree, e.g.
+#   ../<repo>-worktrees/<branch-name>
+# These live outside the tree, so no .gitignore entry is needed for them.
+#
+# IN-REPO worktrees: when tooling or Claude Code creates a worktree inside
+# the repo, the directory must be ignored. Covered base dirs (repo-root-
+# anchored so only top-level dirs are matched):
+/worktrees/
+/.worktrees/
+# Claude Code's own in-repo worktree directory is also ignored:
+# (see the Claude Code project config section below for .claude/worktrees/)
+#
+# ARBITRARY in-repo worktree names (e.g. a dir named /claire/ or /sandbox/):
+# add the path to .git/info/exclude — local, per-clone, never committed.
+# `scripts/worktree.sh create --in-repo` does this automatically; for a
+# worktree created by hand, run `bash scripts/worktree.sh sync-exclude` to
+# exclude every in-repo worktree. No tracked-file change is needed.
+
+# ── Local provisioning config ─────────────────────────────────────────
+# harness.config.example is tracked (documentation); the local working copy
+# that adopters create by copying it is never committed.
+harness.config
 
 # ── Claude Code project config ────────────────────────────────────────
 # Track the invokable harness surfaces (commands/, skills/) and their
