@@ -31,7 +31,7 @@ Default branch: `{{DEFAULT_BRANCH}}`
 
 ## Worktree Directory Naming
 
-Use a predictable sibling directory outside the main repo:
+**Preferred:** sibling directories outside the repo tree (nothing to ignore):
 
 ```
 ../{{REPO_NAME}}-worktrees/<branch-name>
@@ -44,9 +44,26 @@ Use a predictable sibling directory outside the main repo:
 ../my-app-worktrees/fix/null-payment-response
 ```
 
-> TEMPLATE NOTE: If the project already has a different worktree convention, document it here and update [../workflows/worktree-sessions.md](../workflows/worktree-sessions.md) to match.
+**In-repo option:** when tooling (e.g. Claude Code via `.claude/worktrees/`) requires worktrees inside the repo, use `./worktrees/<branch-name>`. In-repo paths under `/worktrees/` are covered by `.gitignore`, and `scripts/worktree.sh create --in-repo` also adds the path to `.git/info/exclude` (local, per-clone, never committed). For an arbitrary in-repo name created by hand (e.g. `git worktree add ./claire`), run `bash scripts/worktree.sh sync-exclude` — it adds every in-repo worktree to `.git/info/exclude` so it can never be staged or committed.
+
+> TEMPLATE NOTE: If the project uses a different worktree convention, document it here and update [../workflows/worktree-sessions.md](../workflows/worktree-sessions.md) to match.
 
 ## Creating a Worktree
+
+**Recommended:** use the helper script — it validates the branch prefix, creates the worktree, and copies env files safely:
+
+```bash
+# Sibling (preferred, outside repo tree):
+bash scripts/worktree.sh create feat/my-feature
+
+# In-repo (./worktrees/<branch>, auto-excluded via .git/info/exclude):
+bash scripts/worktree.sh create feat/my-feature --in-repo
+
+# From a specific base ref:
+bash scripts/worktree.sh create feat/my-feature --base main
+```
+
+**Manual fallback (if the helper is unavailable):**
 
 ```bash
 # From the repo root:

@@ -2,7 +2,7 @@
 
 <!-- FILL: Replace the placeholder above with your actual project name. -->
 
-> TEMPLATE NOTE: This file is Claude Code-specific. It complements `AGENTS.md` — do not duplicate what is already there. Keep it concise (50–250 lines).
+> TEMPLATE NOTE: This file is the **Claude Code adapter** for the harness — it complements `AGENTS.md` and must not duplicate it. The runtime-agnostic portability model lives in [`.agents/context/runtimes.md`](.agents/context/runtimes.md). Keep this file concise (50–250 lines).
 
 ## Initialize a Session
 
@@ -33,6 +33,8 @@ git -C ../{{REPO_NAME}}-worktrees/feat/my-feature status
 Worktree directory pattern: `../{{REPO_NAME}}-worktrees/<branch-name>`
 
 Context: [`.agents/context/worktrees.md`](.agents/context/worktrees.md)
+
+Use `bash scripts/worktree.sh create <branch>` for a safe, validated flow: it validates the branch prefix, creates the worktree, and copies env files. In-repo worktrees (under `./worktrees/`) are covered by `.gitignore`; arbitrary in-repo paths are auto-excluded via `.git/info/exclude`.
 
 ## Inspect Progress
 

@@ -46,7 +46,22 @@ Omit any subsection that has no entries for that date. Every completed task must
 ## 2026-06-21
 
 ### Added
+- **Runtime portability layer** — the harness is now explicitly portable across agent runtimes without duplicating doctrine. New `.agents/context/runtimes.md` (core-vs-adapter model + a Claude Code / Codex / Generic mapping table + the adapter contract) and a `.codex/` adapter (`AGENTS.md`, `README.md`, `prompts/build-loop.md`) that points back into `.agents/`. `CLAUDE.md` is now named as the Claude Code *adapter*.
+- **Provisioning CLI** — `scripts/provision.sh` automates adoption (placeholder fill + stack detection + `verify-harness`), with a write-nothing `--dry-run`, a non-interactive/`--config` path (safe parse, no `eval`/`source`), a refuse-to-clobber guard, and `--runtime claude|codex|both|generic`. `harness.config.example` documents the config. `adoption.md`/README now point to it.
+- **Epic-branch sub-issue closing + ledger sync** — `.github/workflows/epic-sync.yml` closes sub-issues GitHub does not auto-close when a PR merges into an `epic/*` branch (guarded so it never fires on `main`; least-privilege; injection-safe). `scripts/sync-ledger.sh` reconciles `feature_list.json` ↔ GitHub issues (report-only by default; cautious `--fix`; degrades gracefully without `gh`). New `/sync-ledger` command and `.agents/workflows/epic-delivery.md` workflow; `feature_list.json` example gains an `epic` field.
+- **Safe worktree helper** — `scripts/worktree.sh` (`create`/`list`/`remove`/`prune`/`sync-exclude`) with branch-prefix validation, gitignore-verified env copy (never staged, never printed), and a `sync-exclude` catch-all that excludes **any** in-repo worktree (incl. hand-made `./claire`) via `.git/info/exclude`.
 - **`parallel-epic-delivery` project skill** — `.claude/skills/parallel-epic-delivery/SKILL.md` (skills now total 13). A stack-agnostic orchestration pattern for shipping N independent epics concurrently: one git worktree + Workflow lane each (Sonnet implements, Opus drives a strict 10/10 review loop, then PR + adversarial PR-diff review), followed by integration-verification of the *combined* tree and dependency-ordered merges that keep `main` green after every step. Composes the existing single-lane loops (`autonomous-loop-design`, `opus-code-review`) into a fan-out and adds the one thing per-lane loops can't: verification of the merged result before anything lands. Indexed in [`../context/skills.md`](../context/skills.md).
+
+### Changed
+- `init.sh` — stack detection broadened from 4 to **9 ecosystems** (added Ruby/bundler, PHP/composer, Java/Maven, Java/Gradle, .NET, Elixir/mix) following the existing detection pattern; `Next steps` points adopters at `provision.sh`.
+- `.gitignore` — replaced the bare "worktrees live outside the tree" note with a documented in-repo worktree block (`/worktrees/`, `/.worktrees/`, `.git/info/exclude` guidance for arbitrary names).
+- Shared entry/index docs (`AGENTS.md`, `CLAUDE.md`, `README.md`, `.agents/README.md`, `slash-commands.md`, `skills.md`, `subagents.md`, `github-issues.md`, `worktrees.md`, `worktree-sessions.md`, `adoption.md`, `scripts/AGENTS.md`, `.github/AGENTS.md`) — surface the new runtime/provisioning/epic/worktree capabilities (entry-file length limits respected: AGENTS.md 189/200, CLAUDE.md 217/250).
+
+### Tooling
+- `scripts/verify-harness.sh` continues to pass **18/18** with the new command (`/sync-ledger`), scripts, and the `epic-sync.yml` workflow YAML. No verifier changes required (new surfaces auto-covered by existing schema checks §4/§8/§9).
+
+### Docs
+- New `.agents/context/runtimes.md` and `.agents/workflows/epic-delivery.md`; `.codex/` adapter docs — all cross-linked into `.agents/README.md`.
 
 ## 2026-06-20
 

@@ -31,6 +31,8 @@ bash init.sh
 
 See [commands](.agents/context/commands.md) for the full command reference.
 
+First time? Provision placeholders: `bash scripts/provision.sh --help` (or `--dry-run` to preview). See [adoption workflow](.agents/workflows/adoption.md).
+
 ## Required Reading Order
 
 New session or new agent? Read in this order before doing anything else:
@@ -118,6 +120,7 @@ When GitHub is available, use Issues as the project progress system.
 Full workflow: [`.agents/workflows/github-issues.md`](.agents/workflows/github-issues.md)
 
 Issue templates: `.github/ISSUE_TEMPLATE/`
+Epic-branch delivery + ledger sync: [`.agents/workflows/epic-delivery.md`](.agents/workflows/epic-delivery.md)
 
 ## Worktree Session Workflow
 
@@ -127,6 +130,7 @@ Every meaningful coding session should use a dedicated git worktree.
 - Worktree location: `../{{REPO_NAME}}-worktrees/<branch-name>`
 - Full workflow: [`.agents/workflows/worktree-sessions.md`](.agents/workflows/worktree-sessions.md)
 - Worktree context: [`.agents/context/worktrees.md`](.agents/context/worktrees.md)
+- Helper: `bash scripts/worktree.sh create <branch>` — validates prefix, creates, copies env files; `--in-repo` auto-excludes via `.git/info/exclude`
 
 ## Orchestration Mode Selection
 
@@ -182,3 +186,4 @@ Add new ones with `/create-command` / `/create-skill`; all surfaces are schema-c
 | Harness failure modes | [`.agents/context/failure-modes.md`](.agents/context/failure-modes.md) |
 | Template adoption | [`.agents/workflows/adoption.md`](.agents/workflows/adoption.md) |
 | Harness index | [`.agents/README.md`](.agents/README.md) |
+| Runtime portability model | [`.agents/context/runtimes.md`](.agents/context/runtimes.md) |

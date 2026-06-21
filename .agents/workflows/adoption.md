@@ -18,7 +18,26 @@ If the harness is already adopted (no `{{...}}` placeholders remain in entry fil
 
 2. **Discover the project.** Inspect the repo and determine: project name/type, primary language, package manager, default branch, deployment target, and the real install/dev/build/lint/typecheck/test/e2e/format commands. Do not assume the stack — confirm it.
 
-3. **Global find-replace the placeholders.** Replace every `{{...}}` token across the copied files with discovered values:
+3. **Provision the harness.** Run `bash scripts/provision.sh` — it detects the stack, fills every `{{...}}` placeholder across tracked files, and validates with `verify-harness.sh`. Pass values via flags or a config file for non-interactive (agent) use:
+
+   ```bash
+   # Interactive (TTY)
+   bash scripts/provision.sh
+
+   # Non-interactive (agent / CI)
+   bash scripts/provision.sh --non-interactive \
+     --name "Acme Web" --type "web app" --language TypeScript \
+     --owner acme --repo acme-web --default-branch main
+
+   # Config file (recommended for teams)
+   cp harness.config.example harness.config && # edit
+   bash scripts/provision.sh --config harness.config
+
+   # Safe preview (writes nothing)
+   bash scripts/provision.sh --dry-run
+   ```
+
+   **Manual fallback** — if you prefer to find-replace by hand, the full placeholder table is below:
 
    | Placeholder | Example |
    |---|---|

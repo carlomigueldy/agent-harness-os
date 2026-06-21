@@ -65,6 +65,38 @@ Keep handovers compact. Do not dump the whole session.
 
 <!-- FILL: Prepend new handover entries here (newest first). -->
 
+## Handover — 2026-06-21
+
+### Current State
+Portability & delivery hardening complete on in-place epic branch `harness/portability-hardening`. Built by a dynamic workflow (4 parallel Sonnet implementers → Sonnet integrator → Opus reviewer + safety-reviewer 10/10 gate with Sonnet fixer). Opus review **PASS 10/10**, safety **PASS**, `verify-harness` **18/0**. Ready to land via a single PR + a second Opus PR-diff review before merge.
+
+### Completed
+- **Runtime-agnostic:** `.agents/context/runtimes.md` (core-vs-adapter model + mapping table + adapter contract); `.codex/` adapter (AGENTS.md/README.md/prompts/build-loop.md); `CLAUDE.md` reframed as the Claude Code adapter; `init.sh` stack detection 4→9 ecosystems.
+- **Provisioning CLI:** `scripts/provision.sh` (placeholder fill + stack detect + verify; safe `--dry-run`/non-interactive/`--config`; refuse-to-clobber) + `harness.config.example`.
+- **Epic/ledger sync:** `.github/workflows/epic-sync.yml` (closes epic-branch sub-issues, guarded off `main`); `scripts/sync-ledger.sh` (ledger↔issues, graceful without `gh`); `/sync-ledger`; `.agents/workflows/epic-delivery.md`; `feature_list.json` `epic` field.
+- **Worktree gitignore:** `.gitignore` in-repo block + `scripts/worktree.sh` (`create`/`list`/`remove`/`prune`/`sync-exclude`); `sync-exclude` covers arbitrary names like `./claire`.
+
+### Next Best Action
+1. Open the PR to `main` (single PR; PR body documents the four workstreams + evidence).
+2. Run the second Opus review loop on the PR diff; address any findings.
+3. Merge on green; delete the epic branch.
+
+### Worktree / Branch
+- Branch: `harness/portability-hardening` (in-place; no separate worktree — see decision 2026-06-21)
+- Env file status: none needed (docs/template repo)
+
+### Verification
+- `verify-harness.sh` 18/0; `bash -n` all scripts; `bash init.sh` clean; `provision.sh --dry-run` writes nothing; `sync-ledger.sh` graceful (0 drift); live `worktree.sh sync-exclude` excluded a hand-made `./claire`.
+
+### Reviewer Score / Verdict
+- Score: 10/10 · Verdict: PASS (safety PASS)
+
+### Context to Preserve
+- Root `claude-progress.md` / `session-handoff.md` stay template seeds by convention; real history lives in `.agents/logs/*`. No GitHub tracking issues on the template repo.
+
+### Recommended Next Mode
+Review → merge.
+
 ## Handover — 2026-06-03
 
 ### Current State

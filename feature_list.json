@@ -10,6 +10,7 @@
       "user_visible_behavior": "Describe what the user sees or experiences when this feature works correctly.",
       "status": "not_started",
       "github_issue": null,
+      "epic": null,
       "dependencies": [],
       "blockers": [],
       "parallel_safe": false,
@@ -18,7 +19,7 @@
         "Manual: navigate to the feature and confirm expected behavior"
       ],
       "evidence": [],
-      "notes": "RULES: (1) Only one feature may be 'in_progress' at a time unless parallel_safe is true. (2) A feature cannot be set to 'passing' without evidence — evidence must reference test output, screenshots, GIFs, videos, or logs. (3) Link github_issue to the issue number once created. (4) Set parallel_safe to true only after a formal parallelization assessment."
+      "notes": "RULES: (1) Only one feature may be 'in_progress' at a time unless parallel_safe is true. (2) A feature cannot be set to 'passing' without evidence — evidence must reference test output, screenshots, GIFs, videos, or logs. (3) Set github_issue to the GH issue number once created; set epic to the parent epic issue number if this feature belongs to an epic (null otherwise). (4) Keep github_issue in sync: open issue maps to not_started/in_progress; closed issue with evidence maps to passing. Run /sync-ledger (scripts/sync-ledger.sh) to detect and cautiously repair drift. (5) Set parallel_safe to true only after a formal parallelization assessment."
     },
     {
       "id": "example-feature-02",
@@ -28,6 +29,7 @@
       "user_visible_behavior": "Describe what the user sees or experiences when this feature works correctly.",
       "status": "not_started",
       "github_issue": null,
+      "epic": null,
       "dependencies": ["example-feature-01"],
       "blockers": [],
       "parallel_safe": false,
@@ -36,7 +38,7 @@
         "Manual: verify integration with example-feature-01"
       ],
       "evidence": [],
-      "notes": "This feature depends on example-feature-01 completing first (see dependencies). Parallel work is blocked until the dependency is 'passing' with evidence. Replace all placeholder values with real feature data during the initialization workflow."
+      "notes": "This feature depends on example-feature-01 completing first (see dependencies). Parallel work is blocked until the dependency is 'passing' with evidence. If this feature is part of an epic delivery, set epic to the epic issue number and see .agents/workflows/epic-delivery.md. Replace all placeholder values with real feature data during the initialization workflow."
     }
   ]
 }

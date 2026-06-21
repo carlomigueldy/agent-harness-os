@@ -49,6 +49,24 @@ Example:
 
 ## Creating a Worktree
 
+**Recommended:** use `scripts/worktree.sh` — validates the branch prefix, creates the worktree, and copies env files following the rules in [Copying Environment Files Safely](#copying-environment-files-safely):
+
+```sh
+# Sibling (preferred, outside the repo tree):
+bash scripts/worktree.sh create feat/my-feature
+
+# In-repo (auto-excluded via .git/info/exclude if not already gitignored):
+bash scripts/worktree.sh create feat/my-feature --in-repo
+
+# From a specific base ref:
+bash scripts/worktree.sh create feat/my-feature --base main
+
+# List all worktrees:
+bash scripts/worktree.sh list
+```
+
+**Manual fallback:**
+
 ```sh
 # From the repo root
 git worktree add ../{{REPO_NAME}}-worktrees/<branch-name> -b <branch-name>
@@ -173,6 +191,15 @@ git diff --cached --name-only | grep -E "\.env"
 ## Cleanup
 
 After merging or opening a PR:
+
+```sh
+# Safe removal via helper (refuses if uncommitted changes or unmerged commits):
+bash scripts/worktree.sh remove feat/my-feature
+bash scripts/worktree.sh remove feat/old-wip --force   # override safety checks
+bash scripts/worktree.sh prune                         # remove stale metadata
+```
+
+**Manual fallback:**
 
 ```sh
 # Remove the worktree

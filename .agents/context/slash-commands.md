@@ -6,6 +6,8 @@ This file is the **index and authoring contract** for those commands. For projec
 
 > **Namespace rule (important):** Claude Code registers **every** `.md` under `.claude/commands/` as a command. Do **not** put `AGENTS.md`, `README.md`, or any non-command `.md` inside that directory — it would register as a stray `/AGENTS` / `/README` command. That is why this index lives here in `.agents/context/` and the directory holds only real command files. `verify-harness.sh` enforces this.
 
+> **Other runtimes:** In Claude Code, commands live in `.claude/commands/`. Other runtimes expose the same loops via their native invocation mechanism — see [`runtimes.md`](runtimes.md) for the full concept mapping.
+
 ---
 
 ## Command File Schema
@@ -78,6 +80,7 @@ Grouped by purpose. `model: opus` marks commands that run on the strongest tier.
 | [`/issue-plan`](../../.claude/commands/issue-plan.md) | — | Turn a goal into an epic + labeled sub-issue plan |
 | [`/issue-breakdown`](../../.claude/commands/issue-breakdown.md) | — | Break an epic into scoped sub-issues with acceptance criteria |
 | [`/issue-handoff`](../../.claude/commands/issue-handoff.md) | — | Write a handoff note onto an issue for the next session |
+| [`/sync-ledger`](../../.claude/commands/sync-ledger.md) | — | Reconcile `feature_list.json` with GitHub Issue state; surface and cautiously repair drift |
 
 ### Context maps
 

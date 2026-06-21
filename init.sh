@@ -143,11 +143,103 @@ elif [[ -f "go.mod" ]]; then
   info "Stack: Go | Package manager: go modules"
   warn "Go: set the dev/run command (e.g. go run ./cmd/app) in .agents/context/commands.md"
 
+# Ruby
+elif [[ -f "Gemfile" ]]; then
+  DETECTED_STACK="ruby"
+  DETECTED_PM="bundler"
+  if command -v bundle &>/dev/null; then
+    INSTALL_CMD="bundle install"
+    command -v rubocop &>/dev/null && LINT_CMD="bundle exec rubocop"
+    command -v rspec   &>/dev/null && TEST_CMD="bundle exec rspec"
+    [[ -z "$TEST_CMD" ]] && TEST_CMD="bundle exec rake test"
+  else
+    warn "Ruby: bundler not found — set commands manually in .agents/context/commands.md"
+    INSTALL_CMD="gem install bundler && bundle install"
+  fi
+  # DEV_CMD/BUILD_CMD are project-specific for Ruby; set them in commands.md.
+  info "Stack: Ruby | Package manager: bundler"
+
+# PHP
+elif [[ -f "composer.json" ]]; then
+  DETECTED_STACK="php"
+  DETECTED_PM="composer"
+  if command -v composer &>/dev/null; then
+    INSTALL_CMD="composer install"
+    command -v phpcs    &>/dev/null && LINT_CMD="vendor/bin/phpcs"
+    command -v phpstan  &>/dev/null && TYPECHECK_CMD="vendor/bin/phpstan analyse"
+    [[ -f "vendor/bin/phpunit" ]] && TEST_CMD="vendor/bin/phpunit"
+    command -v php-cs-fixer &>/dev/null && FORMAT_CMD="vendor/bin/php-cs-fixer fix"
+  else
+    warn "PHP: composer not found — set commands manually in .agents/context/commands.md"
+    INSTALL_CMD="composer install"
+  fi
+  info "Stack: PHP | Package manager: composer"
+
+# Java — Maven
+elif [[ -f "pom.xml" ]]; then
+  DETECTED_STACK="java"
+  DETECTED_PM="maven"
+  if command -v mvn &>/dev/null; then
+    INSTALL_CMD="mvn dependency:resolve"
+    BUILD_CMD="mvn package -DskipTests"
+    TEST_CMD="mvn test"
+    LINT_CMD="mvn checkstyle:check"
+  else
+    warn "Java/Maven: mvn not found — set commands manually in .agents/context/commands.md"
+    INSTALL_CMD="mvn dependency:resolve"
+  fi
+  info "Stack: Java | Package manager: Maven"
+
+# Java/Kotlin — Gradle
+elif [[ -f "build.gradle" ]] || [[ -f "build.gradle.kts" ]]; then
+  DETECTED_STACK="java"
+  DETECTED_PM="gradle"
+  _gcmd="gradle"
+  [[ -f "./gradlew" ]] && _gcmd="./gradlew"
+  BUILD_CMD="${_gcmd} build -x test"
+  TEST_CMD="${_gcmd} test"
+  LINT_CMD="${_gcmd} check"
+  info "Stack: Java/Kotlin | Package manager: Gradle"
+
+# .NET
+elif compgen -G "*.csproj" &>/dev/null || compgen -G "*.sln" &>/dev/null; then
+  DETECTED_STACK="dotnet"
+  DETECTED_PM="dotnet"
+  if command -v dotnet &>/dev/null; then
+    INSTALL_CMD="dotnet restore"
+    BUILD_CMD="dotnet build"
+    TEST_CMD="dotnet test"
+    FORMAT_CMD="dotnet format"
+  else
+    warn ".NET: dotnet SDK not found — set commands manually in .agents/context/commands.md"
+    INSTALL_CMD="dotnet restore"
+  fi
+  info "Stack: .NET | Package manager: dotnet"
+
+# Elixir
+elif [[ -f "mix.exs" ]]; then
+  DETECTED_STACK="elixir"
+  DETECTED_PM="mix"
+  if command -v mix &>/dev/null; then
+    INSTALL_CMD="mix deps.get"
+    BUILD_CMD="mix compile"
+    TEST_CMD="mix test"
+    LINT_CMD="mix credo"
+    DEV_CMD="mix phx.server"
+    FORMAT_CMD="mix format"
+    warn "Elixir: DEV_CMD set to 'mix phx.server' (Phoenix) — update in .agents/context/commands.md if different"
+  else
+    warn "Elixir: mix not found — set commands manually in .agents/context/commands.md"
+    INSTALL_CMD="mix deps.get"
+  fi
+  info "Stack: Elixir | Package manager: mix"
+
 else
   DETECTED_STACK="unknown"
   DETECTED_PM="unknown"
   warn "Could not detect a known stack. Manually set commands in .agents/context/commands.md"
-  warn "Expected one of: package.json, pyproject.toml, requirements.txt, Cargo.toml, go.mod"
+  warn "Supported: package.json, pyproject.toml/requirements.txt, Cargo.toml, go.mod,"
+  warn "           Gemfile, composer.json, pom.xml, build.gradle, *.csproj/*.sln, mix.exs"
 fi
 
 echo ""
@@ -275,6 +367,7 @@ echo ""
 echo "  Dev/start:  ${DEV_CMD:-(not detected — see .agents/context/commands.md)}"
 echo ""
 info "Next steps:"
+echo "  0. First time? Provision: bash scripts/provision.sh --help  (fills {{placeholders}})"
 echo "  1. Read AGENTS.md and CLAUDE.md"
 echo "  2. Read claude-progress.md for current state"
 echo "  3. Read session-handoff.md for the last handover"
