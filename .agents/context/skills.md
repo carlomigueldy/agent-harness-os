@@ -96,8 +96,9 @@ What to update when the repo changes.
 | [`documentation-maintenance`](../../.claude/skills/documentation-maintenance/SKILL.md) | Keep docs accurate, linked, and within length limits |
 | [`handoff-writing`](../../.claude/skills/handoff-writing/SKILL.md) | Write a compact, complete session handover |
 | [`release-readiness`](../../.claude/skills/release-readiness/SKILL.md) | Run the pre-release verification + changelog + clean-state gate |
+| [`parallel-epic-delivery`](../../.claude/skills/parallel-epic-delivery/SKILL.md) | Orchestrate N epics in parallel across worktree lanes (Sonnet implements, Opus reviews to 10/10, PR + PR-diff review), then integration-verify the merged tree and land review-gated PRs on a green trunk |
 
-> These skills pair with the slash commands indexed in [`slash-commands.md`](slash-commands.md) — e.g. `/review-10x` drives `opus-code-review`, `/create-skill` drives `skill-authoring`.
+> These skills pair with the slash commands indexed in [`slash-commands.md`](slash-commands.md) — e.g. `/review-10x` drives `opus-code-review`, `/create-skill` drives `skill-authoring`, `/gated-orchestration` drives `parallel-epic-delivery`.
 
 ## MCP Tools Available
 
