@@ -84,30 +84,10 @@ body:
     validations:
       required: true
 
-  - type: textarea
-    id: worktree_requirement
+  - type: markdown
     attributes:
-      label: "Worktree Requirement"
-      description: "Branch name, worktree path, and env-file status for this sub-issue."
-      placeholder: |
-        - Branch: feat/<short-description>
-        - Worktree: ../<repo>-worktrees/feat/<short-description>
-        - Env files: copy from default worktree; never stage
-    validations:
-      required: false
-
-  - type: textarea
-    id: testing_requirements
-    attributes:
-      label: "Testing Requirements"
-      description: "Which tests must be written or pass before this sub-issue can be closed?"
-      placeholder: |
-        - Unit tests: ...
-        - Integration tests: ...
-        - E2E tests: ...
-        - Commands: `{{TEST_CMD}}`
-    validations:
-      required: true
+      value: |
+        **Worktree guidance:** [`.agents/context/worktrees.md`](../../.agents/context/worktrees.md). **Verification commands:** [`.agents/context/commands.md`](../../.agents/context/commands.md).
 
   - type: textarea
     id: demo_requirements
@@ -136,18 +116,7 @@ body:
     validations:
       required: false
 
-  - type: textarea
-    id: handover_notes
+  - type: markdown
     attributes:
-      label: "Handover Notes"
-      description: "Notes for the next session or agent picking up this sub-issue. What is the current state? What should happen next?"
-      placeholder: |
-        Current state: ...
-        Next best action:
-        1. ...
-        2. ...
-        Relevant files: ...
-        Commands run: ...
-        Verification status: ...
-    validations:
-      required: false
+      value: |
+        **Handover format:** [`.agents/workflows/handover.md`](../../.agents/workflows/handover.md).

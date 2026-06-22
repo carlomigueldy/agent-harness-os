@@ -175,7 +175,7 @@ Before handing off, confirm:
 - [`../../AGENTS.md`](../../AGENTS.md) — hard constraints and definition of done
 - [`../context/skills.md`](../context/skills.md) — available skills and superpowers
 - [`./orchestration.md`](./orchestration.md) — execution mode decision matrix
-- [`./initialization.md`](./initialization.md) — sprint contract format (canonical copy)
+- [`./initialization.md`](./initialization.md) — session start workflow (points here for the sprint contract)
 - [`../logs/progress.md`](../logs/progress.md) — where sprint contracts are stored
 - [`../logs/decisions.md`](../logs/decisions.md) — prior decisions to consult
 

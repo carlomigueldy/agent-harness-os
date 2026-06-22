@@ -1,8 +1,6 @@
 # Worktrees
 
-Reference for git worktree conventions: branch naming, directory naming, env-file handling, verification, and cleanup.
-
-For the full step-by-step workflow, see [../workflows/worktree-sessions.md](../workflows/worktree-sessions.md).
+Reference for git worktree conventions: branch naming, directory naming, lifecycle, env-file handling, verification, multi-worktree coordination, and cleanup.
 
 ## Why Worktrees
 
@@ -12,6 +10,15 @@ Every meaningful coding session should use a dedicated git worktree. This:
 - Allows multiple features or fixes to coexist without stashing.
 - Makes it safe to copy env files without risking accidental commits.
 - Gives each task an isolated, verifiable environment.
+
+## When to Use
+
+- Starting any non-trivial feature, fix, refactor, or harness change.
+- Any time you would otherwise work directly on `{{DEFAULT_BRANCH}}`.
+- When an agent team assigns editing roles to multiple agents.
+- When a dynamic workflow has implementation workers.
+
+If worktrees are not possible (e.g. git worktree not supported, disk constraints), explain why and continue on a normal branch with extra care.
 
 ## Branch Naming
 
@@ -25,7 +32,7 @@ Every meaningful coding session should use a dedicated git worktree. This:
 | `test/` | Adding or fixing tests | `test/cover-payment-service` |
 | `harness/` | Agent harness improvements | `harness/add-workflow-context` |
 
-Keep branch names short: `feat/user-auth` not `feat/add-user-authentication-system-for-login`.
+Keep branch names lowercase, hyphen-separated, and under 40 characters: `feat/user-auth` not `feat/add-user-authentication-system-for-login`.
 
 Default branch: `{{DEFAULT_BRANCH}}`
 
@@ -44,9 +51,9 @@ Default branch: `{{DEFAULT_BRANCH}}`
 ../my-app-worktrees/fix/null-payment-response
 ```
 
-**In-repo option:** when tooling (e.g. Claude Code via `.claude/worktrees/`) requires worktrees inside the repo, use `./worktrees/<branch-name>`. In-repo paths under `/worktrees/` are covered by `.gitignore`, and `scripts/worktree.sh create --in-repo` also adds the path to `.git/info/exclude` (local, per-clone, never committed). For an arbitrary in-repo name created by hand (e.g. `git worktree add ./claire`), run `bash scripts/worktree.sh sync-exclude` — it adds every in-repo worktree to `.git/info/exclude` so it can never be staged or committed.
+**In-repo option:** when tooling (e.g. Claude Code via `./worktrees/`) requires worktrees inside the repo, use `./worktrees/<branch-name>`. In-repo paths under `/worktrees/` are covered by `.gitignore`, and `scripts/worktree.sh create --in-repo` also adds the path to `.git/info/exclude` (local, per-clone, never committed). For an arbitrary in-repo name created by hand (e.g. `git worktree add ./claire`), run `bash scripts/worktree.sh sync-exclude` — it adds every in-repo worktree to `.git/info/exclude` so it can never be staged or committed.
 
-> TEMPLATE NOTE: If the project uses a different worktree convention, document it here and update [../workflows/worktree-sessions.md](../workflows/worktree-sessions.md) to match.
+> TEMPLATE NOTE: If the project uses a different worktree convention, document it here.
 
 ## Creating a Worktree
 
@@ -61,6 +68,9 @@ bash scripts/worktree.sh create feat/my-feature --in-repo
 
 # From a specific base ref:
 bash scripts/worktree.sh create feat/my-feature --base main
+
+# List all worktrees:
+bash scripts/worktree.sh list
 ```
 
 **Manual fallback (if the helper is unavailable):**
@@ -69,7 +79,10 @@ bash scripts/worktree.sh create feat/my-feature --base main
 # From the repo root:
 git worktree add ../{{REPO_NAME}}-worktrees/<branch-name> -b <branch-name>
 
-# Then copy env files (see Environment section below)
+# Verify it was created
+git worktree list
+
+# Then copy env files (see Environment File Rules below)
 # Then install dependencies if needed
 cd ../{{REPO_NAME}}-worktrees/<branch-name>
 {{INSTALL_CMD}}
@@ -100,14 +113,14 @@ apps/*/.env
 packages/*/.env
 ```
 
-See [environment.md](./environment.md) for the detailed copy steps.
+For the full copy procedure, see [environment.md → Copying Env Files into a Worktree](./environment.md).
 
 ## Session Log Entry (Required Before Implementation)
 
 Before starting implementation in a worktree, log this block in `../../session-handoff.md` or `../logs/progress.md`:
 
 ```md
-## Worktree Session
+## Worktree Session — YYYY-MM-DD — Task Name
 
 ### Branch
 `<branch-name>`
@@ -119,7 +132,7 @@ Before starting implementation in a worktree, log this block in `../../session-h
 `{{DEFAULT_BRANCH}}`
 
 ### Env Files
-Copied / missing / not needed — explain.
+Copied / missing / not needed — list file names only, no values.
 
 ### Git Status
 Clean / dirty — explain if dirty.
@@ -130,29 +143,98 @@ Clean / dirty — explain if dirty.
 Before writing any code, confirm the worktree is functional:
 
 ```bash
-cd ../{{REPO_NAME}}-worktrees/<branch-name>
-git status          # should be clean
+# Confirm you are in the correct worktree and on the right branch
+git worktree list
+git branch --show-current
+
+# Confirm working tree is clean
+git status
+
+# Confirm env files are not staged
+git diff --cached --name-only | grep -E "\.env"
+# Should return nothing
+
 {{LINT_CMD}}        # should pass
 {{TYPECHECK_CMD}}   # should pass
 {{TEST_CMD}}        # should pass (or document known failures)
 ```
+
+## During Implementation
+
+- Stay within the assigned scope — do not edit files outside your assigned area without explicit approval.
+- Run targeted verification after each meaningful change:
+
+  ```bash
+  {{LINT_CMD}}
+  {{TYPECHECK_CMD}}
+  {{TEST_CMD}}
+  ```
+
+- Do not stage or commit env files.
+- Update `../logs/progress.md` as work proceeds.
+
+## Merging or Opening a PR
+
+Before opening a PR or merging:
+
+1. Run full verification in the worktree:
+
+   ```bash
+   {{LINT_CMD}} && {{TYPECHECK_CMD}} && {{TEST_CMD}} && {{BUILD_CMD}}
+   ```
+
+2. Confirm no env files are staged: `git diff --cached --name-only`.
+3. Confirm no secrets are staged: review `git diff --cached`.
+4. Push the branch: `git push -u origin <branch-name>`.
+5. Open a PR — see [../workflows/github-issues.md](../workflows/github-issues.md) for the PR workflow.
+6. Do not merge directly to `{{DEFAULT_BRANCH}}` without review unless the scope is trivial and explicitly approved.
 
 ## Cleanup After Merging
 
 Once the branch is merged or abandoned:
 
 ```bash
+# Helper (safe — refuses if uncommitted changes or unmerged commits):
+bash scripts/worktree.sh remove feat/my-feature
+bash scripts/worktree.sh remove feat/old-wip --force   # override safety checks
+bash scripts/worktree.sh prune                         # remove stale metadata
+```
+
+**Manual fallback:**
+
+```bash
 # From the repo root:
 git worktree remove ../{{REPO_NAME}}-worktrees/<branch-name>
+
+# Prune stale worktree references
+git worktree prune
+
+# Delete the branch if merged
 git branch -d <branch-name>   # only after merge
 ```
 
-Remove any copied env files manually if the directory is not deleted.
+Do not force-delete a branch that has unmerged work unless explicitly approved. Remove any copied env files manually if the directory is not deleted.
+
+## Multiple Worktrees (Agent Teams)
+
+When an agent team assigns editing roles to multiple agents:
+
+- Each editing agent gets its own branch and worktree.
+- Worktree paths must be distinct:
+
+  ```
+  ../{{REPO_NAME}}-worktrees/feat/auth-builder
+  ../{{REPO_NAME}}-worktrees/feat/auth-tester
+  ```
+
+- File ownership must be agreed before any agent begins editing.
+- Lead agent runs integration verification after all branches are merged.
+
+See [../workflows/agent-teams.md](../workflows/agent-teams.md) for the full team workflow.
 
 ## Related
 
-- [../workflows/worktree-sessions.md](../workflows/worktree-sessions.md) — full step-by-step guide
-- [environment.md](./environment.md) — env var setup and copy instructions
+- [environment.md](./environment.md) — env var setup and copy procedure
 - [commands.md](./commands.md) — verification commands
 
 ---

@@ -18,15 +18,21 @@
 
 set -uo pipefail
 
+# ── Shared helpers (colour vars: RED GREEN YELLOW CYAN BOLD RESET) ────────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
+
 LEDGER="${LEDGER:-feature_list.json}"
 FIX=false
 EPIC_ARG=""
 
 # ── Colour helpers ────────────────────────────────────────────────────────────
-_info()  { printf '\033[0;36m[INFO]\033[0m  %s\n' "$*"; }
-_warn()  { printf '\033[0;33m[WARN]\033[0m  %s\n' "$*"; }
-_ok()    { printf '\033[0;32m[OK]\033[0m    %s\n' "$*"; }
-_err()   { printf '\033[0;31m[ERROR]\033[0m %s\n' "$*" >&2; }
+# Use colour vars from scripts/lib/common.sh; preserve the [INFO]/[WARN] format.
+_info()  { printf "${CYAN}[INFO]${RESET}  %s\n" "$*"; }
+_warn()  { printf "${YELLOW}[WARN]${RESET}  %s\n" "$*"; }
+_ok()    { printf "${GREEN}[OK]${RESET}    %s\n" "$*"; }
+_err()   { printf "${RED}[ERROR]${RESET} %s\n" "$*" >&2; }
 
 # ── Argument parsing ──────────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do

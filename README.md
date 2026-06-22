@@ -10,15 +10,7 @@ This is **not just documentation**. It is the structure for planning, implementa
 
 > Stack-agnostic by design. Files use `{{PLACEHOLDER}}` and `<!-- FILL -->` markers; you specialize them once during [adoption](.agents/workflows/adoption.md).
 
-## The Five Subsystems
-
-| Subsystem | Purpose | Key files |
-|---|---|---|
-| **Instructions** | Rules, constraints, definition of done | [`AGENTS.md`](AGENTS.md), [`CLAUDE.md`](CLAUDE.md), [`.agents/context/`](.agents/context/) |
-| **Tools** | Commands, scripts, skills, MCP tools | [`.agents/context/commands.md`](.agents/context/commands.md), [`.agents/context/skills.md`](.agents/context/skills.md) |
-| **Environment** | Runtimes, env vars, local setup | [`.agents/context/environment.md`](.agents/context/environment.md), [`init.sh`](init.sh) |
-| **State** | Progress, decisions, handovers, features | [`claude-progress.md`](claude-progress.md), [`.agents/logs/`](.agents/logs/), [`feature_list.json`](feature_list.json) |
-| **Feedback** | Review loops, verification, rubric | [`evaluator-rubric.md`](evaluator-rubric.md), [`.agents/logs/verification.md`](.agents/logs/verification.md) |
+The Five Subsystems (Instructions, Tools, Environment, State, Feedback) and their key files are described in [`AGENTS.md`](AGENTS.md).
 
 ## Layout
 
@@ -79,21 +71,7 @@ bash scripts/verify-harness.sh
 
 It checks: required structure is present, entry files stay within length limits (`AGENTS.md` ≤ 200, `CLAUDE.md` ≤ 250), `feature_list.json` is valid JSON, issue-form YAML is valid, every relative markdown link resolves, there is no AI/LLM attribution, no secrets are present, shell scripts have valid syntax, every slash command, skill, and subagent conforms to its schema, and required context maps are present.
 
-## Core Principles
-
-- **No AI/LLM attribution** anywhere — commits, PRs, changelogs, docs. Human-owned.
-- **Never commit secrets.** `.gitignore` guards env files; CI scans for leaks.
-- **Verification-first.** Don't claim done without evidence; if verification can't run, say why.
-- **Demo-driven completion** for user-facing work (screenshots, GIFs, CLI output in [`.agents/artifacts/`](.agents/artifacts/)).
-- **Worktree-first sessions** — isolate work in `../<repo>-worktrees/<branch>` (preferred sibling) or `./worktrees/<branch>` (in-repo, gitignored); use `bash scripts/worktree.sh`; never stage copied env files.
-- **GitHub-issue-driven** progress with epic/sub-issue/bug/feature forms and a PR template.
-- **Epic-branch sub-issue auto-close** — `.github/workflows/epic-sync.yml` closes sub-issues when sub-PRs merge into `epic/*` branches; `scripts/sync-ledger.sh` ([`/sync-ledger`](.claude/commands/sync-ledger.md)) reconciles `feature_list.json` with live GitHub Issue state.
-- **Right-sized orchestration** — single agent by default; subagents for isolated focus; agent teams for collaboration; dynamic workflows for repeatable audits/migrations. Don't force parallelism.
-- **Invokable, not just documented** — workflows are exposed as real Claude Code `/commands`, skills, and reusable model-tiered [subagents](.agents/context/subagents.md) under [`.claude/`](.claude/), with bounded autonomous loops (each with a hard iteration cap). See [`.agents/context/slash-commands.md`](.agents/context/slash-commands.md).
-- **Strict review loop** — a reviewer scores 1–10 and gives `PASS` / `REVISE` / `BLOCK`; autonomous loops require 10/10 with no Critical/Major issues (max 6 iterations).
-- **Runtime-agnostic core** — the `.agents/` doctrine works unchanged across Claude Code, Codex, and generic runtimes; adapters are thin wrappers. See [`.agents/context/runtimes.md`](.agents/context/runtimes.md) and the [`.codex/`](.codex/) adapter.
-
-See the [orchestration decision matrix](.agents/workflows/orchestration.md) and the [evaluator rubric](evaluator-rubric.md).
+Core principles (no AI attribution, verification-first, worktree-first, strict review loop, runtime-agnostic core) are defined in [`AGENTS.md`](AGENTS.md). See also the [orchestration decision matrix](.agents/workflows/orchestration.md) and the [evaluator rubric](evaluator-rubric.md).
 
 ## Where to Look Next
 
@@ -102,6 +80,6 @@ See the [orchestration decision matrix](.agents/workflows/orchestration.md) and 
 | Onboard as an agent | [`AGENTS.md`](AGENTS.md) → [`CLAUDE.md`](CLAUDE.md) |
 | Adopt the template | [`.agents/workflows/adoption.md`](.agents/workflows/adoption.md) |
 | Navigate the harness | [`.agents/README.md`](.agents/README.md) |
-| Understand the design intent | [`prompt.md`](prompt.md) (harness spec, for maintainers) |
+| Understand the design intent | See git history — bootstrapped from a meta-prompt |
 
 > After adoption, replace this README with your own project's README — keep a short pointer to `.agents/README.md` so the harness stays discoverable.

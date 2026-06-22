@@ -6,20 +6,14 @@ This directory holds the **executable** part of the {{PROJECT_NAME}} Agent Harne
 
 ## What's tracked here
 
-| Path | What it is |
-|---|---|
-| [`commands/`](commands/) | Project slash commands — one `.md` per command, invoked as `/<name>` |
-| [`skills/`](skills/) | Project skills — one `<name>/SKILL.md` per skill, loaded on demand |
-| [`skills/AGENTS.md`](skills/AGENTS.md) | Local guide for authoring and navigating skills |
-| [`agents/`](agents/) | Reusable subagents — one `<name>.md` per role, model-tiered, for dynamic workflows |
+| Path | What it is | Index + docs |
+|---|---|---|
+| [`commands/`](commands/) | Slash commands — one `.md` per command, invoked as `/<name>` | [`slash-commands.md`](../.agents/context/slash-commands.md) |
+| [`skills/`](skills/) | Project skills — one `<name>/SKILL.md` per skill, loaded on demand | [`skills.md`](../.agents/context/skills.md) |
+| [`skills/AGENTS.md`](skills/AGENTS.md) | Local nav guide for the skills directory | — |
+| [`agents/`](agents/) | Reusable subagents — one `<name>.md` per role, model-tiered | [`subagents.md`](../.agents/context/subagents.md) |
 
 Local/personal Claude Code state (`settings.local.json`, `worktrees/`) is git-ignored — see [`../.gitignore`](../.gitignore).
-
-## Commands vs Skills vs Subagents
-
-- **Commands** (`commands/<name>.md`) are invokable entry points. The file body **is** the prompt the agent receives. Index + schema: [`../.agents/context/slash-commands.md`](../.agents/context/slash-commands.md).
-- **Skills** (`skills/<name>/SKILL.md`) are reusable procedures Claude Code loads when a task matches their `description`. Index + schema: [`../.agents/context/skills.md`](../.agents/context/skills.md).
-- **Subagents** (`agents/<name>.md`) are reusable, model-tiered roles that dynamic workflows delegate to in parallel. Index + tiering: [`../.agents/context/subagents.md`](../.agents/context/subagents.md).
 
 ## Critical rule for `commands/` and `agents/`
 

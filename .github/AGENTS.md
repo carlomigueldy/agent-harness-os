@@ -23,6 +23,14 @@ GitHub-facing configuration for the harness: issue forms, the PR template, and t
 - CI runs the **same** `verify-harness.sh` humans run locally — local and CI checks never drift.
 - The label taxonomy these forms use is documented in [`../.agents/workflows/github-issues.md`](../.agents/workflows/github-issues.md).
 
+## epic-sync.yml — Design Notes
+
+GitHub's built-in `closes #N` keyword only fires on merges to the **default branch**; this Action fills that gap for sub-PRs targeting an `epic/*` branch instead of `main`. Implementation mechanics (integer-only extraction, per-issue error handling, job guard) are documented in the inline comments of `workflows/epic-sync.yml`.
+
+## Runtime Adapters
+
+Runtime adapter directories (`.codex/`, `.claude/`) are thin wrappers — no workflow content is duplicated in them; everything points back to `.agents/`. See [`.agents/context/runtimes.md`](../.agents/context/runtimes.md) for the full portability model.
+
 ## Agent Rules
 
 - Keep issue forms valid YAML — `verify-harness.sh` parses every file under `ISSUE_TEMPLATE/` and `workflows/`.

@@ -8,16 +8,20 @@ Repo-level scripts. Today this is the harness's verification engine — the one 
 
 | Path | What it is |
 |---|---|
-| `verify-harness.sh` | Single source of verification truth: structure, length limits, JSON/YAML validity, link resolution, no-attribution, no-secrets, schema checks, shell syntax. Flags: `--json` (machine-readable), `--scans-only` (content scans only), `--help`; `HARNESS_VERIFY_ROOT` overrides the scan root |
-| `test-verify-harness.sh` | Hermetic regression test for `verify-harness.sh` — drives `--scans-only` against throwaway fixture roots to prove the exclude-dir list holds (closes bug #5). Run by CI after the harness verification step |
-| `provision.sh` | One-shot provisioning CLI: fills `{{PLACEHOLDER}}` tokens, detects the stack (Node/Python/Rust/Go/Ruby/PHP/Java/.NET/Elixir), validates with `verify-harness.sh`. Flags: `--config`, `--name`, `--owner`, `--repo`, `--dry-run`, `--non-interactive`. |
+| `verify-harness.sh` | Single source of verification truth: structure, length limits, JSON/YAML validity, link resolution, no-attribution, no-secrets, schema checks, shell syntax. Flags: `--json` (machine-readable), `--scans-only` (content scans only), `--help`; `HARNESS_VERIFY_ROOT` overrides the scan root. Exports `EXCLUDE_DIRS` before any checks run so `test-verify-harness.sh` can source it. |
+| `test-verify-harness.sh` | Hermetic regression test for `verify-harness.sh` — sources `verify-harness.sh` to obtain `EXCLUDE_DIRS` (single source of truth), then drives `--scans-only` against throwaway fixture roots to prove exclusions hold (closes bug #5). Run by CI after the harness verification step. |
+| `provision.sh` | One-shot provisioning CLI: fills `{{PLACEHOLDER}}` tokens, detects the stack via `lib/stack-detection.sh`, validates with `verify-harness.sh`. Flags: `--config`, `--name`, `--owner`, `--repo`, `--dry-run`, `--non-interactive`. |
 | `sync-ledger.sh` | Reconcile `feature_list.json` with live GitHub Issue state; report drift or cautiously update with `--fix`. Local tool — never run by CI. |
-| `worktree.sh` | Safe worktree helper: create (sibling or in-repo with auto-exclude), list, remove, prune; validates branch prefix; copies env files safely |
+| `worktree.sh` | Safe worktree helper: create (sibling or in-repo with auto-exclude), list, remove, prune; validates branch prefix; copies env files safely. |
+| `lib/common.sh` | Shared colour variables (`RED GREEN YELLOW CYAN BOLD RESET`) and output helpers (`section` `ok` `warn`). Sourced by `init.sh`, `provision.sh`, `verify-harness.sh`, `sync-ledger.sh`, `worktree.sh`. |
+| `lib/stack-detection.sh` | `detect_stack()` function — detects the project stack and sets `_STACK_NAME`, `_STACK_PM`, `_STACK_INSTALL`, `_STACK_DEV`, `_STACK_BUILD`, `_STACK_LINT`, `_STACK_TYPECHECK`, `_STACK_TEST`, `_STACK_FORMAT`. Sourced by `init.sh` and `provision.sh`. |
 | `AGENTS.md` | This file |
 
 ## How This Directory Is Used
 
-`verify-harness.sh` is run locally before a PR and by `.github/workflows/ci.yml` on every push/PR. It is non-destructive and read-only, and it exits non-zero on any failure.
+**Shared library (`lib/`):** All scripts source `lib/common.sh` for colour variables and basic helpers (`section`, `ok`, `warn`). Scripts that detect the project stack also source `lib/stack-detection.sh` and call `detect_stack()`. Each script sets `SCRIPT_DIR` via `"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"` before the source calls so paths resolve correctly regardless of the caller's working directory.
+
+**Verification workflow:** `verify-harness.sh` is run locally before a PR and by `.github/workflows/ci.yml` on every push/PR. It is non-destructive and read-only, and it exits non-zero on any failure. It exports `EXCLUDE_DIRS` before running any checks; `test-verify-harness.sh` sources it to obtain the list rather than maintaining a separate hardcoded copy.
 
 ## Agent Rules
 

@@ -21,7 +21,7 @@ The repo root has both. Subdirectories get an `AGENTS.md` **only where it adds r
 - It has its own conventions, ownership, or "do not touch without review" zones.
 - A fresh agent would otherwise have to reverse-engineer how the directory works.
 
-Current local context files: [`../../.claude/skills/AGENTS.md`](../../.claude/skills/AGENTS.md), `.github/AGENTS.md`, `scripts/AGENTS.md`, `../AGENTS.md` (the `.agents/` guide), `../logs/AGENTS.md`. The `.claude/commands/` directory is documented in [`../context/slash-commands.md`](../context/slash-commands.md), **not** an in-dir file (every `.md` there becomes a command).
+Current local context files: [`../../.claude/skills/AGENTS.md`](../../.claude/skills/AGENTS.md), `.github/AGENTS.md`, `scripts/AGENTS.md`, `../AGENTS.md` (the `.agents/` guide). The `.claude/commands/` directory is documented in [`../context/slash-commands.md`](../context/slash-commands.md), **not** an in-dir file (every `.md` there becomes a command).
 
 ---
 

@@ -151,7 +151,7 @@ Before using subagents, agent teams, or dynamic workflows, confirm:
 
 - [agent-teams.md](./agent-teams.md) — when to use agent teams, role definitions, assessment template
 - [dynamic-workflows.md](./dynamic-workflows.md) — when to use dynamic workflows, proposal format, worker strategy
-- [worktree-sessions.md](./worktree-sessions.md) — worktree setup and env file handling per worker
+- [worktrees.md](../context/worktrees.md) — worktree setup and env file handling per worker
 
 ---
 

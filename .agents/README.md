@@ -82,7 +82,6 @@ Step-by-step operational procedures. Follow these workflows when performing the 
 | [`workflows/context-mapping.md`](workflows/context-mapping.md) | Create/refresh recursive `AGENTS.md` context maps without drift |
 | [`workflows/agent-teams.md`](workflows/agent-teams.md) | Agent team roles, work partitioning, feedback loop |
 | [`workflows/dynamic-workflows.md`](workflows/dynamic-workflows.md) | When and how to create scriptable multi-subagent workflows |
-| [`workflows/worktree-sessions.md`](workflows/worktree-sessions.md) | Worktree creation, env file copying, cleanup |
 | [`workflows/workflow-improvement.md`](workflows/workflow-improvement.md) | When and how to propose harness or workflow improvements |
 | [`workflows/epic-delivery.md`](workflows/epic-delivery.md) | Epic-branch model, sub-issue auto-close via `epic-sync.yml`, and `feature_list.json` ledger sync |
 
@@ -108,17 +107,26 @@ The executable entry points that drive the doctrine above. See [`../.claude/READ
 
 Append-only logs updated throughout the project lifetime. Every session should update relevant logs before ending.
 
-| File | Description |
-|---|---|
-| [`logs/progress.md`](logs/progress.md) | Current phase, sprint contracts, blockers, next actions |
-| [`logs/decisions.md`](logs/decisions.md) | Architectural, tooling, and workflow decisions with rationale |
-| [`logs/changelog.md`](logs/changelog.md) | Task-by-task changelog (Added / Changed / Fixed / etc.) |
-| [`logs/learnings.md`](logs/learnings.md) | Short, searchable, actionable lessons from every session |
-| [`logs/retrospectives.md`](logs/retrospectives.md) | Per-task self-scores and reviewer verdicts |
-| [`logs/handover.md`](logs/handover.md) | Session handover history |
-| [`logs/verification.md`](logs/verification.md) | Verification evidence: commands run, results, artifacts |
-| [`logs/failures.md`](logs/failures.md) | Failure attribution: symptom, root cause, fix, follow-up |
-| [`logs/orchestration.md`](logs/orchestration.md) | Orchestration mode log for every multi-agent execution |
+| File | Description | Cadence |
+|---|---|---|
+| [`logs/progress.md`](logs/progress.md) | Current phase, sprint contracts, blockers, next actions | Every session |
+| [`logs/decisions.md`](logs/decisions.md) | Architectural, tooling, and workflow decisions with rationale | When a decision is made |
+| [`logs/changelog.md`](logs/changelog.md) | Task-by-task changelog (Added / Changed / Fixed / etc.) | Every completed task |
+| [`logs/learnings.md`](logs/learnings.md) | Short, searchable, actionable lessons from every session | When something is learned |
+| [`logs/retrospectives.md`](logs/retrospectives.md) | Per-task self-scores and reviewer verdicts | After meaningful tasks |
+| [`logs/handover.md`](logs/handover.md) | Session handover history | End of session |
+| [`logs/verification.md`](logs/verification.md) | Verification evidence: commands run, results, artifacts | After verification runs |
+| [`logs/failures.md`](logs/failures.md) | Failure attribution: symptom, root cause, fix, follow-up | When something fails |
+| [`logs/orchestration.md`](logs/orchestration.md) | Orchestration mode log for every multi-agent execution | When orchestrating |
+
+### logs/ rules
+
+- **Append, don't rewrite history.** Add new dated entries newest-first; correct with a new entry, never by editing past ones.
+- **Absolute dates only.** Use `YYYY-MM-DD`; never relative dates.
+- **Be honest.** Never claim verification that didn't run or evidence that doesn't exist.
+- **Stay short and searchable.** Link to files or issues; avoid prose where a line suffices.
+- **No AI/LLM attribution** anywhere in these files.
+- These files are tracked state — `.gitignore` never excludes `.agents/logs/`.
 
 ---
 
@@ -146,7 +154,7 @@ See [`artifacts/README.md`](artifacts/README.md) for naming conventions and stor
 | Start a new session | [`workflows/initialization.md`](workflows/initialization.md) |
 | See what's in progress | [`logs/progress.md`](logs/progress.md), [`../claude-progress.md`](../claude-progress.md) |
 | Find the next task | [`../feature_list.json`](../feature_list.json), [`logs/progress.md`](logs/progress.md) |
-| Set up a worktree | [`workflows/worktree-sessions.md`](workflows/worktree-sessions.md) |
+| Set up a worktree | [`context/worktrees.md`](context/worktrees.md) |
 | Choose an execution mode | [`workflows/orchestration.md`](workflows/orchestration.md) |
 | Run a bounded autonomous loop | [`workflows/autonomous-loops.md`](workflows/autonomous-loops.md) |
 | Invoke or author a slash command | [`context/slash-commands.md`](context/slash-commands.md) |
@@ -165,7 +173,7 @@ See [`artifacts/README.md`](artifacts/README.md) for naming conventions and stor
 
 ## For Harness Maintainers
 
-The root [`../prompt.md`](../prompt.md) is the **design specification** that defines this harness (its subsystems, workflows, and rules). It is reference material for people extending or auditing the harness — not part of the per-session reading order for project agents. When adopting the template you may keep it for design intent or remove it; see [`workflows/adoption.md`](workflows/adoption.md).
+This harness was bootstrapped from a meta-prompt (see git history). When extending or auditing, see [`workflows/adoption.md`](workflows/adoption.md) and [`workflows/workflow-improvement.md`](workflows/workflow-improvement.md).
 
 ---
 

@@ -16,6 +16,11 @@
 
 set -euo pipefail
 
+# ── Shared helpers (colour vars: RED GREEN YELLOW CYAN BOLD RESET) ────────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
+
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 usage() {
@@ -58,9 +63,9 @@ Examples:
 USAGE
 }
 
-die()  { echo "ERROR: $*" >&2; exit 1; }
-warn() { echo "WARN:  $*" >&2; }
-info() { echo "INFO:  $*"; }
+die()  { echo -e "${RED}ERROR:${RESET} $*" >&2; exit 1; }
+warn() { echo -e "${YELLOW}WARN:${RESET}  $*" >&2; }
+info() { echo -e "${CYAN}INFO:${RESET}  $*"; }
 
 validate_branch() {
   local branch="$1"

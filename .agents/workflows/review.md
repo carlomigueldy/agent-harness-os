@@ -19,39 +19,7 @@ The Evaluator/Reviewer role scores implementation output against the sprint cont
 - Check for LLM attribution, secrets, and worktree hygiene
 - Decide whether another iteration is needed
 
----
-
-## Scoring Guide
-
-| Score | Meaning |
-|---|---|
-| 10/10 | All criteria met, evidence present, no issues |
-| 8–9/10 | Minor/Nit issues only, no Critical or Major |
-| 6–7/10 | Major issues present, must be fixed |
-| 1–5/10 | Critical issues, blocking problems, or missing evidence |
-
----
-
-## Verdict Rules
-
-```
-PASS   — Score 10/10, zero Critical issues, zero Major issues, verification evidence present or justified
-REVISE — Score 7–9/10, Minor/Nit issues only, or Major issues that are fixable without a full rewrite
-BLOCK  — Score 1–6/10, any Critical issue, missing evidence, staged secrets, or LLM attribution found
-```
-
-In autonomous feedback loops, `PASS` requires exactly 10/10. There is no partial pass.
-
----
-
-## Issue Severity Definitions
-
-| Severity | Definition | Action Required |
-|---|---|---|
-| **Critical** | Broken functionality, security flaw, staged secret, missing evidence claimed as present, LLM attribution | Must fix before any pass |
-| **Major** | Acceptance criterion not met, test suite not run, architectural violation, scope creep | Must fix before pass |
-| **Minor** | Suboptimal approach, missing doc update, test gap that does not block the feature | Should fix, document if deferred |
-| **Nit** | Style, naming, formatting, minor wording | Fix if trivial, otherwise document |
+For scoring dimensions, verdict rules, severity definitions, and the Review Result block template, see [evaluator-rubric.md](../../evaluator-rubric.md).
 
 ---
 
@@ -109,66 +77,9 @@ Substantial changes pass through up to six gates, in order. Each is an independe
 | 5 | **Safety** | No secrets/attribution; destructive ops gated; loops bounded; authz intact | `/security-review` → [`security-review`](../../.claude/skills/security-review/SKILL.md) |
 | 6 | **Final integration** | Units merged cleanly; full verification green; state/handoff updated | `/review-10x` + `/final-handoff` |
 
-Each gate emits the Reviewer Output Format below (or, for an inline gate, the relevant section of it). Record gate results in [`../logs/verification.md`](../logs/verification.md). A change is "done" only when every applicable gate is `PASS`.
+Each gate emits a Review Result block (template: [evaluator-rubric.md → Review Result Block](../../evaluator-rubric.md#review-result-block)). Record gate results in [`../logs/verification.md`](../logs/verification.md). A change is "done" only when every applicable gate is `PASS`.
 
----
-
-## Reviewer Output Format
-
-```md
-## Review — YYYY-MM-DD — Task Name
-
-### Score
-X/10
-
-### Verdict
-PASS / REVISE / BLOCK
-
-### Critical Issues
-- ...
-
-### Major Issues
-- ...
-
-### Minor Issues
-- ...
-
-### Nit Issues
-- ...
-
-### Evidence Checked
-- Verification log: present / absent
-- Demo artifact: present / absent / not required
-- Test output: present / absent
-
-### Compliance
-- No LLM attribution: confirmed / VIOLATION FOUND
-- No secrets staged: confirmed / VIOLATION FOUND
-- Feature state updated: yes / no
-
-### Required Actions Before Next Pass
-1. ...
-
-### Approved to Merge / Continue
-Yes / No
-```
-
----
-
-## Autonomous Feedback Loop Rules
-
-1. Planner defines acceptance criteria
-2. Builder implements and verifies
-3. Reviewer evaluates and scores
-4. Reviewer issues verdict
-5. Critical and Major issues must be fixed
-6. Loop repeats until `Score: 10/10` and `Verdict: PASS`
-7. Maximum iterations: **6** for the default implementation loop. Per-loop caps (e.g. `/review-loop` = 10, `/docs-loop` = 4) are defined in [`autonomous-loops.md`](autonomous-loops.md).
-
-At the iteration cap:
-- Do not pass if Critical or Major issues remain
-- If only Minor/Nit issues remain, document them and create follow-up issues
-- Record final verdict regardless, and write a handoff
+For feedback loop mechanics, iteration caps, and stop conditions, see [autonomous-loops.md](autonomous-loops.md).
 
 ---
 
@@ -189,7 +100,7 @@ This audit expands the **five core subsystems** (Instructions, Tools, Environmen
 | **Environment** | | environment.md, init.sh, env file guidance | | |
 | **State** | | progress.md, feature_list.json freshness | | |
 | **Feedback** | | review loop usage, verification evidence quality | | |
-| **Worktrees** | | worktree-sessions.md adoption, env file hygiene | | |
+| **Worktrees** | | worktrees.md adoption, env file hygiene | | |
 | **Orchestration** | | orchestration.md usage, mode selection quality | | |
 | **Skills / Superpowers** | | skills.md coverage, actual usage in sessions | | |
 
@@ -206,7 +117,7 @@ This audit expands the **five core subsystems** (Instructions, Tools, Environmen
 
 ## Related Files
 
-- [`../../evaluator-rubric.md`](../../evaluator-rubric.md) — detailed scoring rubric for all quality dimensions
+- [`../../evaluator-rubric.md`](../../evaluator-rubric.md) — scoring dimensions, verdict rules, severity definitions, Review Result block template
 - [`autonomous-loops.md`](autonomous-loops.md) — bounded loops that wrap this review machinery
 - [`../context/slash-commands.md`](../context/slash-commands.md) — the review/gate commands (`/review-10x`, `/architecture-review`, `/security-review`)
 - [`../logs/verification.md`](../logs/verification.md) — where verification evidence is stored

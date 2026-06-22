@@ -4,21 +4,11 @@ This repository is an **agent-native harness template**. Contributions come from
 
 ## Start here
 
-1. Read [`AGENTS.md`](AGENTS.md) (overview, hard constraints, definition of done) → [`CLAUDE.md`](CLAUDE.md) (Claude Code workflow).
-2. Read the current state: [`claude-progress.md`](claude-progress.md) and [`session-handoff.md`](session-handoff.md).
-3. Navigate with the harness index: [`.agents/README.md`](.agents/README.md).
-
-## The non-negotiables
-
-- **No AI/LLM attribution** anywhere — commits, PRs, code, docs, changelogs. Human-owned.
-- **Never commit secrets.** `.gitignore` guards env/key files; CI scans for leaks.
-- **Verification-first.** Don't claim done without evidence; if a check can't run, document why.
-- **Right-sized orchestration.** Single agent by default; escalate only when the work warrants it. Don't force parallelism.
-- **Strict review.** Non-trivial work passes a 10/10 review gate ([`evaluator-rubric.md`](evaluator-rubric.md)).
+Read [`AGENTS.md`](AGENTS.md) first — it has the required reading order, hard constraints, and definition of done. Then follow [`CLAUDE.md`](CLAUDE.md) for the Claude Code workflow and [`.agents/README.md`](.agents/README.md) to navigate the harness.
 
 ## How to make a change
 
-1. **Branch** from `main`: `feat/…`, `fix/…`, `docs/…`, `chore/…`, `refactor/…`, `test/…`, or `harness/…`. Use a worktree for meaningful work — see [`.agents/workflows/worktree-sessions.md`](.agents/workflows/worktree-sessions.md).
+1. **Branch** from `main`: `feat/…`, `fix/…`, `docs/…`, `chore/…`, `refactor/…`, `test/…`, or `harness/…`. Use a worktree for meaningful work — see [`.agents/context/worktrees.md`](.agents/context/worktrees.md).
 2. **Plan** with a sprint contract in [`.agents/logs/progress.md`](.agents/logs/progress.md) (or run `/gated-orchestration`).
 3. **Implement** scoped changes; keep entry files within length limits (`AGENTS.md` ≤ 200, `CLAUDE.md` ≤ 250).
 4. **Verify:** `bash scripts/verify-harness.sh` must pass locally — it is the single source of verification truth, and CI runs the same script.

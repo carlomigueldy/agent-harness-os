@@ -2,33 +2,7 @@
 
 Coordinate multiple Claude Code sessions for complex work that benefits from specialized roles.
 
-## When to Use
-
-Use an agent team only when all of the following are true:
-
-- The task is complex enough to justify coordination overhead
-- Workstreams are independent but related, with clear ownership boundaries
-- Multiple agents need to share findings directly or challenge each other's assumptions
-- One context window would be a bottleneck
-- The work benefits from specialized roles (design, build, test, review)
-
-Good use cases:
-
-- Designing a new feature across frontend, backend, contracts, and tests
-- Large refactors with separate ownership boundaries
-- Parallel code review (security, architecture, tests, UX reviewers)
-- Complex debugging with competing hypotheses
-- Multi-module implementation where each teammate owns a separate area
-- Harness audits where teammates review instructions, tools, environment, state, and feedback separately
-
-**When NOT to use a team:**
-
-- The task is simple or medium-sized
-- Teammates would edit the same files
-- The task is mostly sequential
-- The project lacks enough context for safe delegation
-- Token budget is constrained
-- Coordination cost exceeds the implementation cost
+Use agent teams only when the situation calls for it — consult [orchestration.md](./orchestration.md) for the mode decision matrix and hard limits.
 
 ---
 
@@ -105,31 +79,7 @@ What to do if the team becomes inefficient (collapse to single agent, record rea
 
 ---
 
-## Reviewer Feedback Loop
-
-Every non-trivial agent team task must include an autonomous feedback loop:
-
-1. Planner defines acceptance criteria.
-2. Builders implement and verify their own work.
-3. Reviewer evaluates all output.
-4. Reviewer scores 1–10 and gives verdict: `PASS` / `REVISE` / `BLOCK`.
-5. Critical and Major issues are fixed.
-6. Loop repeats until `Score: 10/10` + `Verdict: PASS`, or 6 iterations are reached.
-
-**Pass requires all of:**
-
-```
-Score: 10/10
-Verdict: PASS
-Critical issues: 0
-Major issues: 0
-Verification evidence: present or clearly justified
-No secrets staged: confirmed
-No LLM attribution: confirmed
-Progress/changelog/handover updated: confirmed
-```
-
-If iteration 6 is reached and Critical or Major issues remain, do not ship. Document remaining issues and create follow-up GitHub Issues.
+Every non-trivial agent team task must run the reviewer feedback loop — see [review.md](./review.md) for the process and gates, and [autonomous-loops.md](./autonomous-loops.md) for iteration caps, stop conditions, and the Loop Report format.
 
 ---
 
@@ -143,7 +93,7 @@ Each editing agent (Builder, Tester, Documenter) must have:
 - Clear verification responsibility
 - Clear handover responsibility
 
-See [worktree-sessions.md](./worktree-sessions.md) for worktree setup and env file handling.
+See [worktrees.md](../context/worktrees.md) for worktree setup and env file handling.
 
 After all teammates finish, the Lead runs final integration verification:
 

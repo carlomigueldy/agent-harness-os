@@ -4,44 +4,13 @@ Root-cause record of failures encountered in {{PROJECT_NAME}}. When something fa
 
 ## Format
 
-```md
-## YYYY-MM-DD — Failure Title
-
-### Context
-What was being attempted.
-
-### Symptom
-What failed.
-
-### Root Cause
-Best known cause.
-
-### Category
-Instruction / Tool / Environment / State / Feedback / Code / Requirement / External
-
-### Fix
-What changed.
-
-### Verification
-How the fix was checked.
-
-### Follow-up
-What should be improved in the harness to prevent this.
+```
+## YYYY-MM-DD — Title
+**Category:** Instruction | Tool | Environment | State | Feedback | Code | Requirement | External
+**Context / Symptom / Root Cause / Fix / Verification / Follow-up:** (one line each)
 ```
 
-**Category definitions:**
-| Category | Meaning |
-|---|---|
-| Instruction | Harness instructions were unclear, missing, or wrong |
-| Tool | A CLI, MCP, or harness tool behaved unexpectedly |
-| Environment | Missing dependency, wrong version, missing env var |
-| State | Stale progress file, wrong branch, dirty worktree |
-| Feedback | Reviewer loop, rubric, or acceptance criteria were unclear |
-| Code | Bug in application or test code |
-| Requirement | The requirement itself was ambiguous or changed |
-| External | Third-party service, API, or infrastructure failure |
-
-If the failure was caused by a missing harness feature, propose a harness improvement in [../proposals/](../proposals/).
+If the root cause was a harness gap, propose an improvement in [`../proposals/`](../proposals/).
 
 ---
 

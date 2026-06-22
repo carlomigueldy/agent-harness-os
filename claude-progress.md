@@ -1,7 +1,7 @@
 # Progress Dashboard — {{PROJECT_NAME}}
 
 > Every session reads this file before starting work and updates it before ending.
-> The detailed mirror (sprint contracts, orchestration logs) lives in [.agents/logs/progress.md](.agents/logs/progress.md).
+> The detailed log (sprint contracts, orchestration records) lives in [`.agents/logs/progress.md`](.agents/logs/progress.md).
 
 ---
 
@@ -24,11 +24,6 @@
 
 ---
 
-## Completed
-
-<!-- FILL: list of completed tasks/features with dates -->
-- `YYYY-MM-DD` — *(nothing completed yet — update after each task)*
-
 ## In Progress
 
 <!-- FILL: exactly what is currently underway; only one item unless parallel_safe -->
@@ -39,8 +34,6 @@
 <!-- FILL: anything preventing progress -->
 - `<!-- blocker or "none" -->`
 
----
-
 ## Next Best Action
 
 <!-- FILL: the single most important next step -->
@@ -48,48 +41,28 @@
 
 ---
 
-## Current Branch
+## Current Branch / Worktree
 
-<!-- FILL: e.g. main, feat/my-feature -->
-`<!-- branch name -->`
-
-## Current Worktree Path
-
-<!-- FILL: absolute path to the active worktree, or "main repo" -->
-`<!-- worktree path -->`
-
----
-
-## Open Issues
-
-<!-- FILL: list of open GitHub issue numbers/titles, or "none" -->
-- `<!-- #issue-number — title -->`
-
-## Open PRs
-
-<!-- FILL: list of open GitHub PR numbers/titles, or "none" -->
-- `<!-- #pr-number — title -->`
+<!-- FILL: branch and absolute path to active worktree, or "main repo" -->
+- Branch: `<!-- branch name -->`
+- Worktree: `<!-- worktree path -->`
 
 ---
 
 ## Last Verification Run
 
 <!-- FILL: date + command + result -->
-- Date: `YYYY-MM-DD`
-- Command: `<!-- command -->`
-- Result: `<!-- pass / fail / partial -->`
+- Date: `YYYY-MM-DD` — Command: `<!-- command -->` — Result: `<!-- pass / fail / partial -->`
 
-## Last Demo Artifact
+## Open Issues / PRs
 
-<!-- FILL: path to screenshot, GIF, video, or CLI output, and date -->
-- Date: `YYYY-MM-DD`
-- Artifact: `<!-- .agents/artifacts/... -->`
+<!-- FILL: links to active GitHub issues and PRs, or "none" -->
+- `<!-- issue/PR links or "none" -->`
 
 ## Last Handover
 
-<!-- FILL: date of the most recent handover written to session-handoff.md -->
-- Date: `YYYY-MM-DD HH:mm`
-- File: [session-handoff.md](session-handoff.md)
+<!-- FILL: date of the most recent handover -->
+- Date: `YYYY-MM-DD HH:mm` — File: [`session-handoff.md`](session-handoff.md)
 
 ---
 

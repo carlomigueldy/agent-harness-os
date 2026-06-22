@@ -23,7 +23,7 @@ main (default branch)
 - **Sub-PRs** — one PR per sub-issue, targeting `epic/<name>` (not `main`). Each PR body includes a closing keyword: `Closes #<sub-issue>`.
 - **Epic PR** — a single draft PR from `epic/<name>` into `main`, kept open until the full epic passes the acceptance gate and review.
 
-Each sub-issue/sub-PR pair follows the standard worktree workflow. See [worktree-sessions.md](worktree-sessions.md).
+Each sub-issue/sub-PR pair follows the standard worktree workflow. See [`../context/worktrees.md`](../context/worktrees.md).
 
 ---
 
@@ -143,7 +143,7 @@ The `/sync-ledger` slash command wraps this script with an imperative procedure.
 ## Related
 
 - **GitHub Issues workflow (label taxonomy, PR workflow, closing keywords):** [github-issues.md](github-issues.md)
-- **Worktree protocol (branch creation, env files, teardown):** [worktree-sessions.md](worktree-sessions.md)
+- **Worktree protocol (branch creation, env files, teardown):** [`../context/worktrees.md`](../context/worktrees.md)
 - **Parallel epic delivery (fan-out, per-lane review, integration verify):** [`.claude/skills/parallel-epic-delivery/SKILL.md`](../../.claude/skills/parallel-epic-delivery/SKILL.md)
 - **Sync action:** [`.github/workflows/epic-sync.yml`](../../.github/workflows/epic-sync.yml)
 - **Sync script:** [`scripts/sync-ledger.sh`](../../scripts/sync-ledger.sh)

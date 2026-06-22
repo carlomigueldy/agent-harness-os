@@ -4,7 +4,7 @@ Reusable, model-tiered subagent role definitions live in [`../../.claude/agents/
 
 This file is the **index and authoring contract** for those subagents. For invokable commands see [`slash-commands.md`](slash-commands.md); for skills see [`skills.md`](skills.md).
 
-> **Namespace rule:** like `.claude/commands/`, every `.md` under `.claude/agents/` is parsed as an agent definition — never put an `AGENTS.md`/`README.md` there (it would register as an `/agents/AGENTS` agent). This index lives here in `.agents/context/` instead. `verify-harness.sh` enforces it.
+> **Namespace rule:** See [runtimes.md → Adapter & Namespace Rules](runtimes.md) for the full constraint. This index lives in `.agents/context/`, not inside `.claude/agents/`, to avoid stray agent registration.
 
 > **Other runtimes:** In Claude Code, subagent roles live in `.claude/agents/`. Other runtimes assign roles manually using the specs in this file. See [`runtimes.md`](runtimes.md) for the full concept mapping.
 

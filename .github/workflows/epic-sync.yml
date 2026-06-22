@@ -1,9 +1,3 @@
-# epic-sync.yml — Close sub-issues referenced in a PR body when that PR is
-# merged into an epic/* branch. GitHub's built-in "closes #N" keyword only
-# auto-closes issues on merges to the DEFAULT branch; this Action fills the
-# gap for sub-PRs that target an epic branch instead of main, so issue state
-# stays accurate without requiring manual intervention after each sub-PR merge.
-
 name: Epic – Close Sub-issues on Merge
 
 on:
@@ -19,9 +13,7 @@ permissions:
 jobs:
   close-sub-issues:
     name: Close referenced sub-issues
-    # Guard: only act when the PR was actually merged (not just closed/abandoned)
-    # AND its target branch is an epic/* branch.
-    # This is a no-op for PRs into main or any non-epic branch.
+    # Guard: only run on merged PRs whose base is an epic/* branch — no-op otherwise.
     if: "github.event.pull_request.merged == true && startsWith(github.event.pull_request.base.ref, 'epic/')"
     runs-on: ubuntu-latest
     steps:

@@ -82,18 +82,7 @@ Planning / Implementation / Review / Debugging / Testing / Documentation
 
 ## Pre-Handover Checklist
 
-Complete before writing the handover:
-
-- [ ] `../../feature_list.json` reflects current feature statuses
-- [ ] `../../claude-progress.md` is up to date
-- [ ] `../../.agents/logs/progress.md` is up to date
-- [ ] `../../.agents/logs/verification.md` has the latest evidence entry
-- [ ] `../../.agents/logs/changelog.md` has an entry if meaningful work was completed
-- [ ] GitHub issues and PRs are updated (if available)
-- [ ] No secrets staged (`git diff --cached`)
-- [ ] No env files staged
-- [ ] Worktree state is understood and documented
-- [ ] If reviewer loop ran: score and verdict are recorded
+Complete before writing the handover. See [`../../clean-state-checklist.md`](../../clean-state-checklist.md) for the full checklist.
 
 ---
 

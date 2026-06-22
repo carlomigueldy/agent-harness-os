@@ -1,6 +1,8 @@
 # Commands
 
-**Single source of truth for all runnable commands.** Every other doc links here; do not duplicate commands elsewhere.
+**Single source of truth for all runnable shell/CLI commands** (install, build, test, deploy). Every other doc links here; do not duplicate commands elsewhere.
+
+> **Disambiguation:** This file covers shell commands you run in a terminal. For Claude Code slash commands (`/build-loop`, `/review-10x`, etc.), see [`slash-commands.md`](slash-commands.md).
 
 ## Core Command Reference
 

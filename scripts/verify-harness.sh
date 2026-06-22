@@ -59,11 +59,29 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
+# ── Single source of truth: directories that must never be scanned ────────────
+# Exported so test-verify-harness.sh can source this file to obtain the list
+# without running any checks (the guard below returns early when sourced).
+# Vendored/generated/build output plus nested git-worktree copies. Pruning the
+# basename 'worktrees' catches BOTH ./worktrees/ and ./.claude/worktrees/, which
+# is also a DETERMINISM fix: the verifier walks the filesystem, so a stray local
+# worktree would otherwise inflate the scan counts.
+EXCLUDE_DIRS=( .git node_modules dist build vendor out .next .turbo .cache .vite coverage .venv venv __pycache__ worktrees )
+export EXCLUDE_DIRS
+
+# Guard: when sourced (not executed directly), stop here.
+# Callers obtain EXCLUDE_DIRS; no checks run and no side-effects occur.
+[[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
+
+# ── Shared helpers (colour vars: RED GREEN YELLOW CYAN BOLD RESET) ────────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
+
 cd "${HARNESS_VERIFY_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || echo .)}"
 
 PASS=0
 FAILED=0
-RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BOLD='\033[1m'; RESET='\033[0m'
 
 # Per-check result rows, captured for both human output and --json emission.
 CURRENT_GROUP=""
@@ -104,15 +122,11 @@ fail_list() {
 # concatenated fixtures) — excluded from scans.
 # Anchored to the path field (before the first ':') so it never hides a real hit
 # that merely mentions these filenames in its content.
-EXCLUDE='prompt\.md|verify-harness\.sh|test-verify-harness\.sh'
+EXCLUDE='verify-harness\.sh|test-verify-harness\.sh'
 exclude_by_path() { grep -vE "^[^:]*(${EXCLUDE}):"; }
 
-# ── Single source of truth: directories that must never be scanned ────────────
-# Vendored/generated/build output plus nested git-worktree copies. Pruning the
-# basename 'worktrees' catches BOTH ./worktrees/ and ./.claude/worktrees/, which
-# is also a DETERMINISM fix: the verifier walks the filesystem, so a stray local
-# worktree would otherwise inflate the scan counts.
-EXCLUDE_DIRS=( .git node_modules dist build vendor out .next .turbo .cache .vite coverage .venv venv __pycache__ worktrees )
+# EXCLUDE_DIRS is defined and exported near the top of this file (before the
+# guard) so test-verify-harness.sh can source it to obtain the list.
 GREP_EXCLUDE_DIRS=()
 for d in "${EXCLUDE_DIRS[@]}"; do GREP_EXCLUDE_DIRS+=(--exclude-dir="$d"); done
 

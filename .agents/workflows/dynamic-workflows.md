@@ -2,39 +2,7 @@
 
 Scriptable, repeatable, many-subagent orchestration for audit, migration, and verification tasks.
 
-## When to Use
-
-Use dynamic workflows when:
-
-- The task needs many subagents working in parallel
-- The workflow will be run more than once
-- The process is systematic and repeatable
-- The output can be validated against a rubric
-- Workers only need to return structured findings (not discuss tradeoffs)
-- The task is too broad for one agent but too structured for agent-team discussion
-
-Good use cases:
-
-- Repo-wide codebase audit
-- Security review
-- Performance audit
-- Accessibility audit
-- Large mechanical migration (e.g., dependency upgrade, API rename)
-- Test coverage audit
-- Documentation freshness audit
-- Cross-module architecture review
-- Find every place a pattern exists and classify risk
-- Review all features against `feature_list.json` and verify evidence
-
-**Dynamic workflows vs. agent teams:**
-
-| Use dynamic workflow when... | Use agent team when... |
-|---|---|
-| Workflow can be scripted | Agents need to discuss tradeoffs |
-| Workers return structured findings | Agents need to negotiate ownership |
-| Same workflow should be rerun later | Work is exploratory or creative |
-| Task is audit-like or migration-like | Real-time plan adaptation is needed |
-| Collaboration between workers is NOT needed | Agents need to talk to each other |
+Use dynamic workflows only when the situation calls for it — consult [orchestration.md](./orchestration.md) for the mode decision matrix and hard limits.
 
 ---
 
@@ -157,32 +125,7 @@ Pin each worker to the **cheapest tier that does the job** — let `scout` (haik
 
 ---
 
-## Reviewer Feedback Loop
-
-Every dynamic workflow must include a reviewer pass after all workers finish.
-
-**Pass requires all of:**
-
-```
-Score: 10/10
-Verdict: PASS
-Critical issues: 0
-Major issues: 0
-Verification evidence: present or justified
-No secrets referenced without masking
-No LLM attribution
-```
-
-**Loop:**
-
-1. Workers complete structured findings.
-2. Lead synthesizes findings compactly.
-3. Reviewer evaluates against acceptance criteria and rubric.
-4. Reviewer scores 1–10 and gives verdict: `PASS` / `REVISE` / `BLOCK`.
-5. Critical and Major issues trigger another worker pass (scoped to affected areas).
-6. Loop repeats up to max 6 iterations.
-
-If iteration 6 is reached and Critical or Major issues remain, do not declare pass. Document and create follow-up issues.
+Every dynamic workflow must include a reviewer pass after all workers finish — see [review.md](./review.md) for the process and gates, and [autonomous-loops.md](./autonomous-loops.md) for iteration caps, stop conditions, and the Loop Report format.
 
 ---
 

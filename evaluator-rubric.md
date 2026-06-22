@@ -28,6 +28,17 @@ Use this rubric in every review loop. Score each dimension from 1–10, then com
 
 ---
 
+## Severity Definitions
+
+| Severity | Definition | Blocks PASS? |
+|---|---|---|
+| **Critical** | Correctness failure, security hole, data loss, broken contract, or regression that ships to users | Yes |
+| **Major** | Significant functional gap, missing test coverage for new behavior, broken link in critical path, or missing evidence | Yes |
+| **Minor** | Readability issue, non-critical missing doc, suboptimal naming, incomplete handover section | No (REVISE preferred) |
+| **Nit** | Style, formatting, cosmetic — optional polish only | No |
+
+---
+
 ## Verdict Rules
 
 ```

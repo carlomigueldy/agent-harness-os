@@ -14,7 +14,7 @@ If the harness is already adopted (no `{{...}}` placeholders remain in entry fil
 ## Day 0 Checklist
 
 1. **Copy the harness into the target repo.**
-   Copy these into the project root: `AGENTS.md`, `CLAUDE.md`, `init.sh`, `feature_list.json`, `claude-progress.md`, `session-handoff.md`, `clean-state-checklist.md`, `evaluator-rubric.md`, `.gitignore` (merge, don't overwrite), `.agents/`, and `.github/`. Do **not** copy `prompt.md` unless you want the harness design spec (it is for harness maintainers, not project agents).
+   Copy these into the project root: `AGENTS.md`, `CLAUDE.md`, `init.sh`, `feature_list.json`, `claude-progress.md`, `session-handoff.md`, `clean-state-checklist.md`, `evaluator-rubric.md`, `.gitignore` (merge, don't overwrite), `.agents/`, and `.github/`.
 
 2. **Discover the project.** Inspect the repo and determine: project name/type, primary language, package manager, default branch, deployment target, and the real install/dev/build/lint/typecheck/test/e2e/format commands. Do not assume the stack — confirm it.
 

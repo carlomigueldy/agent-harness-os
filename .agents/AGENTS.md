@@ -24,7 +24,7 @@ Agents read `context/` to understand the project and `workflows/` to perform an 
 ## Agent Rules
 
 - `context/` and `workflows/` are doctrine — change them deliberately; major workflow changes need a proposal in [`proposals/`](proposals/) (see [`workflows/workflow-improvement.md`](workflows/workflow-improvement.md)).
-- `logs/` is append-only running state — see [`logs/AGENTS.md`](logs/AGENTS.md).
+- `logs/` is append-only running state — see [logs/ rules in README.md](README.md#logs-rules).
 - Do not duplicate content across `context/`/`workflows/` and the root entry files — link instead. The harness's rule is "merge & improve, don't duplicate".
 - Keep cross-links accurate; `verify-harness.sh` fails on broken relative links.
 - No AI/LLM attribution in any file here.

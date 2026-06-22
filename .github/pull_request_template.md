@@ -25,15 +25,8 @@ Closes #<!-- issue number -->
 
 ## Verification Evidence
 
-<!-- Run the relevant commands and paste output here. Do not leave this blank unless you explain why. -->
-
-```
-# Commands run and their results
-{{LINT_CMD}}
-{{TYPECHECK_CMD}}
-{{TEST_CMD}}
-{{BUILD_CMD}}
-```
+<!-- Run the relevant verification commands and paste output here. Do not leave this blank unless you explain why. -->
+<!-- Commands for this project: `.agents/context/commands.md` -->
 
 <details>
 <summary>Output</summary>
@@ -43,8 +36,6 @@ Closes #<!-- issue number -->
 ```
 
 </details>
-
-> TEMPLATE NOTE: Replace command placeholders with the actual project commands discovered in `.agents/context/commands.md`.
 
 ## Demo / Evidence
 
@@ -57,7 +48,7 @@ _No demo captured — reason: <!-- explain if no evidence exists -->_
 
 ## Reviewer Score & Verdict
 
-<!-- To be filled in by the reviewer during the review loop. -->
+<!-- To be filled in by the reviewer during the review loop. Scoring rubric and verdict rules: `evaluator-rubric.md`. -->
 
 | Field | Value |
 |-------|-------|
@@ -83,9 +74,7 @@ _No demo captured — reason: <!-- explain if no evidence exists -->_
 - [ ] No secrets are staged or included in this PR
 - [ ] No AI/LLM attribution anywhere (commits, code, docs, PR description)
 - [ ] Docs or inline comments updated near changed code (if relevant)
-- [ ] `.agents/logs/changelog.md` updated
-- [ ] `claude-progress.md` and `.agents/logs/progress.md` updated
-- [ ] `.agents/logs/handover.md` updated with compact handover
+- [ ] Progress + handover updated (`claude-progress.md`, `.agents/logs/handover.md`)
 - [ ] `feature_list.json` updated (status, evidence, github_issue)
 - [ ] Clean state confirmed (no unintended files staged, no leftover debug code)
 - [ ] Verification commands ran (or clearly justified why they could not)

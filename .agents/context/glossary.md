@@ -26,7 +26,7 @@ Definitions for harness terms and project-specific terminology.
 | **Agent Team** | Multiple Claude Code sessions collaborating on a complex task with defined roles (Lead, Architect, Builder, Tester, Reviewer, Documenter). |
 | **Subagent** | A focused worker agent dispatched to investigate a narrow scope and return a summary result. Keeps the main session context clean. |
 | **Context File** | A file in `.agents/context/` that provides reference information for any session without needing re-discovery. |
-| **Model Tiering** | Using cheaper models for low-complexity tasks and stronger models for architecture, security, or high-risk review. |
+| **Model Tiering** | Using cheaper models for low-complexity tasks, stronger for architecture/review. Full tier table and role assignments: [subagents.md → Model Tiering](subagents.md). |
 | **Clean State** | The condition of the repo at session end: no staged secrets, no uncommitted env files, progress updated, handover written, next action clear. |
 | **Harness Debt** | Gaps, stale content, or missing workflows in the agent harness. Treated like technical debt — tracked and improved. |
 | **Feedback Loop** | The iterative Plan → Implement → Verify → Review → Revise cycle. Continues until Reviewer gives 10/10 PASS or max iterations (6) are reached. |

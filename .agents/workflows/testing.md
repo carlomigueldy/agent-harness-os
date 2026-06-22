@@ -2,7 +2,7 @@
 
 Verification-first testing workflow. Run the right checks for the right change type — before handoff, not after.
 
-**When to use:** During implementation (Step 5 of `./implementation.md`) and when the reviewer asks for a verification pass.
+**When to use:** During implementation (see `./implementation.md`) and when the reviewer asks for a verification pass.
 
 ---
 
@@ -195,7 +195,7 @@ What the reviewer or next session should check first.
 
 - [`../context/commands.md`](../context/commands.md) — all project commands
 - [`../logs/verification.md`](../logs/verification.md) — where evidence is recorded
-- [`./implementation.md`](./implementation.md) — builder workflow (verification is Step 5)
+- [`./implementation.md`](./implementation.md) — builder workflow (delegates verification steps here)
 - [`./review.md`](./review.md) — reviewer checks evidence during scoring
 
 ---

@@ -29,7 +29,13 @@ Adapters expose harness loops and commands through a runtime's native invocation
 3. All doctrine (loops, review rubric, stop conditions, state formats) is read from `.agents/` — not duplicated.
 4. See the [`.codex/` adapter](../../.codex/README.md) for the adapter overview and [`.codex/prompts/build-loop.md`](../../.codex/prompts/build-loop.md) as a worked example.
 
-## Adapter Contract
+## Adapter & Namespace Rules
+
+### Namespace constraint
+
+Claude Code registers **every** `.md` under `.claude/commands/` as an invokable command, and every `.md` under `.claude/agents/` as an agent definition. Never place `AGENTS.md`, `README.md`, or any non-command/non-agent `.md` inside those directories — it would register as a stray `/AGENTS` or `/agents/AGENTS` invocation. Indexes and docs for those directories live in `.agents/context/` instead. `verify-harness.sh` enforces this.
+
+### Adapter authoring contract
 
 To add a new runtime adapter (e.g. `.gemini/`, `.cursor/`):
 

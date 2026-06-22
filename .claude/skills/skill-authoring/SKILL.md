@@ -43,9 +43,7 @@ Produce a new `.claude/skills/<name>/SKILL.md` that satisfies the harness schema
 3. **Confirm the name.** The `name` in frontmatter and the directory name must be identical, lower-kebab-case. Decide this before creating any files.
 
 4. **Create the directory and write `SKILL.md`.** Create `.claude/skills/<name>/SKILL.md` with:
-   - YAML frontmatter block (`---`) as the very first line, containing `name` and `description`.
-   - `# Skill: <name>` as the H1.
-   - All required headings **in this order**: `## Purpose`, `## When to Use`, `## When Not to Use`, `## Inputs`, `## Outputs`, `## Procedure`, `## Checks`, `## Common Failure Modes`, `## Example Usage`, `## Related Commands`, `## Maintenance Notes`.
+   - Frontmatter, H1, and required headings in the order defined in the skill schema in [`../../../.agents/context/skills.md`](../../../.agents/context/skills.md).
    - Write the body in **imperative voice** — actionable steps, not third-person description.
    - Use `{{PLACEHOLDER}}` for any project-specific values; keep the skill stack-agnostic.
    - Link workflows with prefix `../../../.agents/workflows/`, context docs with `../../../.agents/context/`, sibling skills with `../<other>/SKILL.md`. Never link to files that do not exist.

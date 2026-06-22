@@ -15,15 +15,15 @@
 
 set -euo pipefail
 
-# ── Colours ───────────────────────────────────────────────────────────────────
-RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
-CYAN='\033[0;36m'; BOLD='\033[1m'; RESET='\033[0m'
+# ── Shared helpers ────────────────────────────────────────────────────────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
+# shellcheck source=scripts/lib/stack-detection.sh
+source "${SCRIPT_DIR}/lib/stack-detection.sh"
 
-info()    { echo -e "${CYAN}[provision]${RESET} $*"; }
-ok()      { echo -e "${GREEN}[ok]${RESET}     $*"; }
-warn()    { echo -e "${YELLOW}[warn]${RESET}   $*"; }
-err()     { echo -e "${RED}[error]${RESET}  $*" >&2; }
-section() { echo -e "\n${BOLD}── $* ──────────────────────────────────────────${RESET}"; }
+info() { echo -e "${CYAN}[provision]${RESET} $*"; }
+err()  { echo -e "${RED}[error]${RESET}  $*" >&2; }
 
 # ── Usage ─────────────────────────────────────────────────────────────────────
 usage() {
@@ -215,158 +215,21 @@ fi
 
 # ── Stack detection (pre-fill command defaults) ───────────────────────────────
 section "Stack detection"
-DET_STACK="" DET_PM=""
-DET_INSTALL="" DET_DEV="" DET_BUILD="" DET_LINT="" DET_TYPECHECK="" DET_TEST="" DET_FORMAT=""
 
-# Node.js / JS ecosystem
-if [[ -f "package.json" ]]; then
-  DET_STACK="node"
-  if [[ -f "pnpm-lock.yaml" ]]; then
-    DET_PM="pnpm"; DET_INSTALL="pnpm install"
-  elif [[ -f "yarn.lock" ]]; then
-    DET_PM="yarn"; DET_INSTALL="yarn install"
-  elif [[ -f "bun.lockb" ]] || [[ -f "bun.lock" ]]; then
-    DET_PM="bun"; DET_INSTALL="bun install"
-  else
-    DET_PM="npm"; DET_INSTALL="npm install"
-  fi
-  _scripts() { node -e "const p=require('./package.json');console.log(Object.keys(p.scripts||{}).join(' '))" 2>/dev/null || true; }
-  _sc=$(_scripts)
-  [[ "$_sc" == *"build"*      ]] && DET_BUILD="${DET_PM} run build"
-  [[ "$_sc" == *"dev"*        ]] && DET_DEV="${DET_PM} run dev"
-  [[ "$_sc" == *"start"*      ]] && DET_DEV="${DET_DEV:-${DET_PM} run start}"
-  [[ "$_sc" == *"lint"*       ]] && DET_LINT="${DET_PM} run lint"
-  [[ "$_sc" == *"typecheck"*  ]] && DET_TYPECHECK="${DET_PM} run typecheck"
-  [[ "$_sc" == *"type-check"* ]] && DET_TYPECHECK="${DET_TYPECHECK:-${DET_PM} run type-check}"
-  [[ "$_sc" == *"test"*       ]] && DET_TEST="${DET_PM} run test"
-  [[ "$_sc" == *"format"*     ]] && DET_FORMAT="${DET_PM} run format"
-  info "Detected: Node.js | $DET_PM"
-
-# Python
-elif [[ -f "pyproject.toml" ]] || [[ -f "requirements.txt" ]] || [[ -f "setup.py" ]]; then
-  DET_STACK="python"
-  if command -v poetry &>/dev/null && [[ -f "pyproject.toml" ]]; then
-    DET_PM="poetry"; DET_INSTALL="poetry install"
-  elif command -v uv &>/dev/null; then
-    DET_PM="uv"; DET_INSTALL="uv sync"
-  elif [[ -f "requirements.txt" ]]; then
-    DET_PM="pip"; DET_INSTALL="pip install -r requirements.txt"
-  else
-    DET_PM="pip"; DET_INSTALL="pip install -e ."
-  fi
-  command -v ruff    &>/dev/null && DET_LINT="ruff check ."
-  [[ -z "$DET_LINT" ]]      && command -v flake8  &>/dev/null && DET_LINT="flake8"
-  command -v mypy    &>/dev/null && DET_TYPECHECK="mypy ."
-  [[ -z "$DET_TYPECHECK" ]] && command -v pyright &>/dev/null && DET_TYPECHECK="pyright"
-  command -v pytest  &>/dev/null && DET_TEST="pytest"
-  command -v ruff    &>/dev/null && DET_FORMAT="ruff format ."
-  [[ -z "$DET_FORMAT" ]]    && command -v black   &>/dev/null && DET_FORMAT="black ."
-  info "Detected: Python | $DET_PM"
-
-# Rust
-elif [[ -f "Cargo.toml" ]]; then
-  DET_STACK="rust"; DET_PM="cargo"
-  DET_INSTALL="# Rust: deps handled by cargo on build"
-  DET_BUILD="cargo build"; DET_TEST="cargo test"; DET_LINT="cargo clippy"; DET_DEV="cargo run"
-  info "Detected: Rust | cargo"
-
-# Go
-elif [[ -f "go.mod" ]]; then
-  DET_STACK="go"; DET_PM="go"
-  DET_INSTALL="go mod download"; DET_BUILD="go build ./..."; DET_TEST="go test ./..."
-  if command -v golangci-lint &>/dev/null; then DET_LINT="golangci-lint run"; else DET_LINT="go vet ./..."; fi
-  warn "Go: set the dev/run command (e.g. go run ./cmd/app) in .agents/context/commands.md"
-  info "Detected: Go | go modules"
-
-# Ruby
-elif [[ -f "Gemfile" ]]; then
-  DET_STACK="ruby"; DET_PM="bundler"
-  if command -v bundle &>/dev/null; then
-    DET_INSTALL="bundle install"
-    command -v rubocop &>/dev/null && DET_LINT="bundle exec rubocop"
-    command -v rspec   &>/dev/null && DET_TEST="bundle exec rspec"
-    [[ -z "$DET_TEST" ]] && DET_TEST="bundle exec rake test"
-  else
-    warn "Ruby: bundler not found — set commands manually in .agents/context/commands.md"
-    DET_INSTALL="gem install bundler && bundle install"
-  fi
-  info "Detected: Ruby | bundler"
-
-# PHP
-elif [[ -f "composer.json" ]]; then
-  DET_STACK="php"; DET_PM="composer"
-  if command -v composer &>/dev/null; then
-    DET_INSTALL="composer install"
-    command -v phpcs    &>/dev/null && DET_LINT="vendor/bin/phpcs"
-    command -v phpstan  &>/dev/null && DET_TYPECHECK="vendor/bin/phpstan analyse"
-    [[ -f "vendor/bin/phpunit" ]] && DET_TEST="vendor/bin/phpunit"
-    command -v php-cs-fixer &>/dev/null && DET_FORMAT="vendor/bin/php-cs-fixer fix"
-  else
-    warn "PHP: composer not found — set commands manually in .agents/context/commands.md"
-    DET_INSTALL="composer install"
-  fi
-  info "Detected: PHP | composer"
-
-# Java — Maven
-elif [[ -f "pom.xml" ]]; then
-  DET_STACK="java"; DET_PM="maven"
-  if command -v mvn &>/dev/null; then
-    DET_INSTALL="mvn dependency:resolve"
-    DET_BUILD="mvn package -DskipTests"; DET_TEST="mvn test"; DET_LINT="mvn checkstyle:check"
-  else
-    warn "Java/Maven: mvn not found — set commands manually in .agents/context/commands.md"
-    DET_INSTALL="mvn dependency:resolve"
-  fi
-  info "Detected: Java | Maven"
-
-# Java/Kotlin — Gradle
-elif [[ -f "build.gradle" ]] || [[ -f "build.gradle.kts" ]]; then
-  DET_STACK="java"; DET_PM="gradle"
-  _gcmd="gradle"; [[ -f "./gradlew" ]] && _gcmd="./gradlew"
-  DET_BUILD="${_gcmd} build -x test"; DET_TEST="${_gcmd} test"; DET_LINT="${_gcmd} check"
-  info "Detected: Java/Kotlin | Gradle"
-
-# .NET
-elif compgen -G "*.csproj" &>/dev/null || compgen -G "*.sln" &>/dev/null; then
-  DET_STACK="dotnet"; DET_PM="dotnet"
-  if command -v dotnet &>/dev/null; then
-    DET_INSTALL="dotnet restore"; DET_BUILD="dotnet build"
-    DET_TEST="dotnet test"; DET_FORMAT="dotnet format"
-  else
-    warn ".NET: dotnet SDK not found — set commands manually in .agents/context/commands.md"
-    DET_INSTALL="dotnet restore"
-  fi
-  info "Detected: .NET | dotnet"
-
-# Elixir
-elif [[ -f "mix.exs" ]]; then
-  DET_STACK="elixir"; DET_PM="mix"
-  if command -v mix &>/dev/null; then
-    DET_INSTALL="mix deps.get"; DET_BUILD="mix compile"; DET_TEST="mix test"
-    DET_LINT="mix credo"; DET_DEV="mix phx.server"; DET_FORMAT="mix format"
-    warn "Elixir: DEV_CMD set to 'mix phx.server' — update in .agents/context/commands.md if different"
-  else
-    warn "Elixir: mix not found — set commands manually in .agents/context/commands.md"
-    DET_INSTALL="mix deps.get"
-  fi
-  info "Detected: Elixir | mix"
-
-else
-  DET_STACK="unknown"; DET_PM="unknown"
-  warn "Could not detect a known stack — command placeholders will remain after provisioning."
-  warn "Set them in .agents/context/commands.md and run again."
-fi
+detect_stack   # sets _STACK_NAME, _STACK_PM, _STACK_INSTALL, _STACK_DEV,
+               #      _STACK_BUILD, _STACK_LINT, _STACK_TYPECHECK, _STACK_TEST,
+               #      _STACK_FORMAT  (see scripts/lib/stack-detection.sh)
 
 # Merge detected values into OPT_* (only fill gaps not set by flags or config)
-[[ -z "$OPT_LANGUAGE"     && -n "$DET_STACK"      ]] && OPT_LANGUAGE="$DET_STACK"
-[[ -z "$OPT_PM"           && -n "$DET_PM"         ]] && OPT_PM="$DET_PM"
-[[ -z "$OPT_INSTALL_CMD"  && -n "$DET_INSTALL"    ]] && OPT_INSTALL_CMD="$DET_INSTALL"
-[[ -z "$OPT_DEV_CMD"      && -n "$DET_DEV"        ]] && OPT_DEV_CMD="$DET_DEV"
-[[ -z "$OPT_BUILD_CMD"    && -n "$DET_BUILD"      ]] && OPT_BUILD_CMD="$DET_BUILD"
-[[ -z "$OPT_LINT_CMD"     && -n "$DET_LINT"       ]] && OPT_LINT_CMD="$DET_LINT"
-[[ -z "$OPT_TYPECHECK_CMD" && -n "$DET_TYPECHECK" ]] && OPT_TYPECHECK_CMD="$DET_TYPECHECK"
-[[ -z "$OPT_TEST_CMD"     && -n "$DET_TEST"       ]] && OPT_TEST_CMD="$DET_TEST"
-[[ -z "$OPT_FORMAT_CMD"   && -n "$DET_FORMAT"     ]] && OPT_FORMAT_CMD="$DET_FORMAT"
+[[ -z "$OPT_LANGUAGE"      && -n "$_STACK_NAME"      ]] && OPT_LANGUAGE="$_STACK_NAME"
+[[ -z "$OPT_PM"            && -n "$_STACK_PM"         ]] && OPT_PM="$_STACK_PM"
+[[ -z "$OPT_INSTALL_CMD"   && -n "$_STACK_INSTALL"    ]] && OPT_INSTALL_CMD="$_STACK_INSTALL"
+[[ -z "$OPT_DEV_CMD"       && -n "$_STACK_DEV"        ]] && OPT_DEV_CMD="$_STACK_DEV"
+[[ -z "$OPT_BUILD_CMD"     && -n "$_STACK_BUILD"      ]] && OPT_BUILD_CMD="$_STACK_BUILD"
+[[ -z "$OPT_LINT_CMD"      && -n "$_STACK_LINT"       ]] && OPT_LINT_CMD="$_STACK_LINT"
+[[ -z "$OPT_TYPECHECK_CMD" && -n "$_STACK_TYPECHECK"  ]] && OPT_TYPECHECK_CMD="$_STACK_TYPECHECK"
+[[ -z "$OPT_TEST_CMD"      && -n "$_STACK_TEST"       ]] && OPT_TEST_CMD="$_STACK_TEST"
+[[ -z "$OPT_FORMAT_CMD"    && -n "$_STACK_FORMAT"     ]] && OPT_FORMAT_CMD="$_STACK_FORMAT"
 
 # Fixed auto-values
 [[ -z "$OPT_BRANCH" ]] && OPT_BRANCH="main"
@@ -447,14 +310,15 @@ echo "  Runtime adapter    = ${OPT_RUNTIME}"
 section "File list"
 
 # Files excluded because they legitimately contain template-shaped or regex strings:
-#   prompt.md              — harness design spec
 #   scripts/verify-harness.sh — contains grep patterns matching token forms
-#   scripts/provision.sh   — this script itself
-#   harness.config*        — local config files (example stays as documentation)
-#   .env* files            — secrets, never touched
-#   .claude/worktrees/     — runtime worktree copies
-#   dist/, build/, .next/  — generated output (rarely tracked, but guard anyway)
-EXCLUDE_PATTERN='(^|/)\.env($|[._])|^prompt\.md$|^scripts/verify-harness\.sh$|^scripts/provision\.sh$|^harness\.config$|^\.claude/worktrees/|^dist/|^build/|^\.next/'
+#   scripts/provision.sh      — this script itself
+#   harness.config*           — local config files (example stays as documentation)
+#   .env* files               — secrets, never touched
+#   .claude/worktrees/        — runtime worktree copies
+#   dist/, build/, .next/     — generated output (rarely tracked, but guard anyway)
+# Note: prompt.md was removed here; it no longer exists (bootstrapped from a
+#       meta-prompt — see git history if context is needed).
+EXCLUDE_PATTERN='(^|/)\.env($|[._])|^scripts/verify-harness\.sh$|^scripts/provision\.sh$|^harness\.config$|^\.claude/worktrees/|^dist/|^build/|^\.next/'
 
 FILE_LIST=$(git ls-files 2>/dev/null | grep -vE "$EXCLUDE_PATTERN" || true)
 FILE_COUNT=$(printf '%s\n' "$FILE_LIST" | grep -c . || true)

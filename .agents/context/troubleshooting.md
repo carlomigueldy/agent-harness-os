@@ -10,52 +10,7 @@ Common problems and their fixes. Each entry has a Problem, Symptom, and Fix.
 
 **Symptom:** Dev server or tests fail immediately with `Missing required env var: <VAR>` or similar config errors.
 
-**Fix:**
-```bash
-# Find env files in the main worktree
-ls /path/to/main-worktree/.env*
-
-# Copy each to the session worktree at the same relative path
-cp /path/to/main-worktree/.env /path/to/session-worktree/.env
-
-# Verify it is gitignored
-git -C /path/to/session-worktree check-ignore -v .env
-
-# Confirm it is not staged
-git -C /path/to/session-worktree status
-```
-
-See [environment.md](./environment.md) for the full env-copy protocol and [worktrees.md](./worktrees.md) for worktree setup.
-
----
-
-## Verification Command Not Found — Check commands.md Placeholders
-
-**Problem:** A `{{*_CMD}}` placeholder was not replaced with a real command during harness initialization.
-
-**Symptom:** Running `{{LINT_CMD}}` or similar literally in the shell produces `command not found` or bash parse errors.
-
-**Fix:**
-1. Open [commands.md](./commands.md).
-2. Identify which `{{*_CMD}}` placeholders are still unfilled.
-3. Discover the real command from `package.json` scripts, `Makefile`, or project docs.
-4. Replace the placeholder with the real command.
-5. Run the command to verify it works.
-
----
-
-## Install Fails with Dependency Conflicts
-
-**Problem:** `{{INSTALL_CMD}}` exits with peer dependency or version conflict errors.
-
-**Symptom:** Error messages mentioning `ERESOLVE`, `incompatible peer`, or `resolution failed`.
-
-**Fix:**
-<!-- FILL: Add project-specific fix if known. General guidance below. -->
-- Check that your runtime version matches the required version in [environment.md](./environment.md).
-- Try clearing the package manager cache: <!-- FILL: e.g. `npm cache clean --force` or `pip cache purge` -->
-- Check for a lock file conflict (`.lock` file from a different package manager).
-- If the project uses a version manager (nvm, pyenv, asdf), ensure the correct version is active.
+**Fix:** Follow the copy procedure in [environment.md → Copying Env Files into a Worktree](./environment.md). See [worktrees.md → Environment File Rules](./worktrees.md) for the rules.
 
 ---
 

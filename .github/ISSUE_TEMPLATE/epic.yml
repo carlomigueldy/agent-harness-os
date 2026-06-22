@@ -157,29 +157,10 @@ body:
     validations:
       required: false
 
-  - type: textarea
-    id: worktree_notes
+  - type: markdown
     attributes:
-      label: "Worktree Notes"
-      description: "Branch naming, worktree path, and env-file handling guidance for this epic."
-      placeholder: |
-        - Branch: feat/<short-description>
-        - Worktree: ../<repo>-worktrees/feat/<short-description>
-        - Env files: copy from default branch worktree; never stage
-    validations:
-      required: false
-
-  - type: textarea
-    id: orchestration_notes
-    attributes:
-      label: "Agent-Team / Dynamic-Workflow Notes"
-      description: "If this epic requires multi-agent orchestration, describe the approach. Which roles are needed? Is a dynamic workflow more appropriate than an agent team?"
-      placeholder: |
-        - Orchestration mode: single agent / subagents / agent team / dynamic workflow
-        - Roles: Lead, Builder, Tester, Reviewer
-        - Dynamic workflow: N/A or describe trigger and worker strategy
-    validations:
-      required: false
+      value: |
+        **Worktree & orchestration guidance:** see [`.agents/context/worktrees.md`](../../.agents/context/worktrees.md) and [`.agents/workflows/orchestration.md`](../../.agents/workflows/orchestration.md).
 
   - type: dropdown
     id: reviewer_score_required

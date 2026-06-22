@@ -37,17 +37,15 @@ Produce a new `.claude/commands/<name>.md` slash command that passes `verify-har
 
 ## Procedure
 
-1. **Read the schema and the exemplar command.** Open [`../../../.agents/context/slash-commands.md`](../../../.agents/context/slash-commands.md) and read the full Command File Schema section: required frontmatter fields (`description`, optional `argument-hint`, optional `model`), required headings in order, naming rules, link prefixes, and the footer rule. Then open `.claude/commands/gated-orchestration.md` and calibrate style, depth, and imperative voice. Note how the Procedure steps are worded — each step is a direct instruction, not a description.
+1. **Read the schema and the exemplar command.** Open [`../../../.agents/context/slash-commands.md`](../../../.agents/context/slash-commands.md) (Command File Schema section) for the full schema: frontmatter fields, required headings in order, naming rules, authoring rules, and footer. Then open `.claude/commands/gated-orchestration.md` and calibrate style, depth, and imperative voice. Note how the Procedure steps are worded — each step is a direct instruction, not a description.
 
-2. **Write `.claude/commands/<name>.md` with all required headings.** Apply these rules:
-   - YAML frontmatter: `description` (one imperative line); `argument-hint` if the command takes arguments; `model: opus` only for review, architecture, security, or planning commands — omit otherwise.
-   - `# /<name>` heading followed by a `>` purpose blockquote.
-   - Required headings in exact order: `## Purpose`, `## Usage`, `## Parameters`, `## Preconditions`, `## Procedure`, `## Stop Conditions`, `## Safety`, `## Output`, `## Related`.
+2. **Write `.claude/commands/<name>.md` following the schema in [`../../../.agents/context/slash-commands.md`](../../../.agents/context/slash-commands.md).** Key edge cases:
+   - `model: opus` only for review, architecture, security, or planning commands — omit otherwise.
    - Write the body as an actionable prompt in imperative voice. Use `$ARGUMENTS`, `$1`, `$2` where the command takes input.
    - Use `{{PLACEHOLDER}}` for any project-specific values; never hardcode a stack.
    - No AI/LLM attribution anywhere in the file.
-   - Relative link prefix for a file at `.claude/commands/<name>.md`: workflows → `../../.agents/workflows/<file>.md`; context docs → `../../.agents/context/<file>.md`; skills → `../../.claude/skills/<skill-name>/SKILL.md`; harness index → `../../.agents/README.md`; AGENTS.md → `../../AGENTS.md`. Reference sibling commands as code spans (`/name`), never as markdown links.
-   - End with the exact footer, substituting the command file's two-levels-up root prefix `<ROOT>` = `../..`: `_Part of the {{PROJECT_NAME}} Agent Harness OS — see the [harness index](<ROOT>/.agents/README.md) and [AGENTS.md](<ROOT>/AGENTS.md)._` (so the command file ships `../../.agents/README.md` and `../../AGENTS.md`).
+   - Relative link prefix from `.claude/commands/<name>.md`: workflows → `../../.agents/workflows/<file>.md`; context → `../../.agents/context/<file>.md`; skills → `../../.claude/skills/<skill-name>/SKILL.md`; harness index → `../../.agents/README.md`. Reference sibling commands as code spans (`/name`), never as markdown links.
+   - End with the standard harness footer (see the bottom of this SKILL.md for the format); the command file is two levels from root so its root prefix is `../../` — giving `../../.agents/README.md` and `../../AGENTS.md`.
 
 3. **Write the Procedure as an imperative prompt; reference sibling commands as code spans.** Each numbered step should be a direct instruction the executing agent follows. Where the command composes with another command, write `/sibling-command` as a code span inline — never a markdown link. Cross-reference relevant skills using their relative path links.
 

@@ -25,6 +25,12 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 [[ -f "$VERIFY" ]] || { echo "FATAL: verify-harness.sh not found at $VERIFY" >&2; exit 1; }
 
+# Source verify-harness.sh to obtain EXCLUDE_DIRS (single source of truth).
+# The BASH_SOURCE guard in verify-harness.sh makes it return early when sourced,
+# so no checks run and no working-directory side-effects occur.
+# shellcheck source=scripts/verify-harness.sh
+source "$VERIFY"
+
 FAILS=0
 ok()   { echo "PASS: $*"; }
 bad()  { echo "FAIL: $*" >&2; FAILS=$((FAILS+1)); }
@@ -51,13 +57,12 @@ write_poison() {
 }
 
 # ── FIXTURE A: exclusions hold across every excluded dir ──────────────────────
-write_poison "$TMP_A/node_modules/pkg/README.md"
-write_poison "$TMP_A/.turbo/x.md"
-write_poison "$TMP_A/.cache/y.md"
-write_poison "$TMP_A/dist/z.md"
-write_poison "$TMP_A/out/w.md"
-write_poison "$TMP_A/.vite/v.md"
-write_poison "$TMP_A/worktrees/wt/README.md"
+# Seed one poison file per entry in EXCLUDE_DIRS (sourced from verify-harness.sh
+# above) so the test is automatically in sync when the list grows.
+for _excl in "${EXCLUDE_DIRS[@]}"; do
+  [[ "$_excl" == ".git" ]] && continue  # .git is skipped by all tools; skip here too
+  write_poison "${TMP_A}/${_excl}/poison.md"
+done
 
 out_a="$(HARNESS_VERIFY_ROOT="$TMP_A" bash "$VERIFY" --scans-only 2>&1)"; rc_a=$?
 

@@ -142,13 +142,7 @@ If you notice a repeated task that would benefit from a dedicated skill or workf
 - Review a PR against the evaluator rubric
 - Audit context file freshness
 
-## Model Tiering Quick Reference
-
-| Task | Recommended Tier |
-|------|-----------------|
-| Architecture planning, security review, complex design | Opus-level |
-| General implementation, tests, docs, debugging | Sonnet-level |
-| Trivial edits, formatting, simple docs updates | Haiku-level |
+For model-tiering decisions, see [subagents.md → Model Tiering](subagents.md).
 
 ---
 

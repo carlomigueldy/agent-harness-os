@@ -43,7 +43,7 @@ Know which worktrees are active, which branches they track, and whether any are 
 ### Step 9 — Create or select the correct worktree for this session
 Determine whether to:
 - Use an existing worktree for the target branch, or
-- Create a new worktree following the naming convention in [`./worktree-sessions.md`](./worktree-sessions.md)
+- Create a new worktree following the naming convention in [`../context/worktrees.md`](../context/worktrees.md)
 
 Default worktree directory pattern: `../<repo-name>-worktrees/<branch-name>`
 
@@ -88,104 +88,16 @@ gh pr list --state open
 ```
 Understand which issues are assigned, in review, or blocked. Link this session's work to the relevant issue before starting.
 
-### Step 13 — Identify the next best action
-Using all context gathered in steps 1–12, state clearly:
-- What is the highest-priority unfinished work?
-- Is there a blocker that prevents that work?
-- What is the concrete first step?
+## What's Next
 
-### Step 14 — Confirm verification commands
-Review `../../.agents/context/commands.md`. Know which commands will be used to verify the work for this session before implementation begins.
+After gathering context (Steps 1–12), determine your path forward:
 
-### Step 15 — Discover relevant skills and superpowers
-Check `../../.agents/context/skills.md`. Identify:
-- Applicable `/superpowers:*` skills
-- Whether `/frontend-design` applies to this session's work
-- Any project-specific skills documented there
+1. **Identify the highest-priority unfinished work** — what is blocked, what is the concrete first step?
+2. **Confirm verification commands** — see [`../context/commands.md`](../context/commands.md)
+3. **Select execution mode and model tier** — see [`./orchestration.md`](./orchestration.md) for the full decision matrix
+4. **Write a sprint contract** — see [`./planning.md`](./planning.md) for the full format and steps; store it in [`../logs/progress.md`](../logs/progress.md)
 
-### Step 16 — Select execution mode
-Choose one:
-
-| Mode | Use When |
-|---|---|
-| **Single agent** | Small/medium tasks, shared files, unclear requirements |
-| **Subagent** | Focused investigation, isolated second opinion, parallel research |
-| **Agent team** | Complex cross-module work, roles need to collaborate |
-| **Dynamic workflow** | Repeatable many-worker audits, migrations, verifications |
-| **Sequential manual** | High-risk changes (auth, payments, migrations, secrets) |
-
-See [`./orchestration.md`](./orchestration.md) for the full decision matrix.
-
-### Step 17 — Select model tier
-
-| Tier | Use For |
-|---|---|
-| **Opus-level** | Architecture, security review, final evaluation, complex RCA |
-| **Sonnet-level** | General implementation, debugging, tests, refactoring |
-| **Haiku-level** | Trivial edits, formatting, simple docs updates |
-
-### Step 18 — Decide whether work is sequential or parallel-safe
-Parallel work requires genuinely independent workstreams with no shared file edits, clear dependency order, and explicit worktree assignments. When in doubt, choose sequential.
-
-### Step 19 — Create or update a sprint contract before implementation
-For any non-trivial task, write a sprint contract (see format below) in `../../.agents/logs/progress.md` before writing a single line of implementation code.
-
----
-
-## Sprint Contract Format
-
-Store active sprint contracts in `../../.agents/logs/progress.md`.
-
-```md
-## Sprint Contract — Task Name
-
-### Goal
-What needs to be achieved.
-
-### Scope
-What will be changed.
-
-### Non-goals
-What will not be changed.
-
-### Acceptance Criteria
-- ...
-
-### Verification Plan
-- ...
-
-### Demo Plan
-- ...
-
-### Dependencies
-- ...
-
-### Blockers
-- ...
-
-### Worktree
-Branch/path/env status.
-
-### Skills / Superpowers
-Relevant `/frontend-design` or `/superpowers:*` usage.
-
-### Orchestration Mode
-Single agent / subagent / agent team / dynamic workflow / sequential manual.
-
-### Parallelization Assessment
-Sequential required / parallel-safe.
-
-### Risk Level
-Low / medium / high.
-
-### Model Tier
-Haiku / Sonnet / Opus-level.
-
-### Done Means
-Clear definition of done.
-```
-
-No non-trivial task should start without this.
+For any non-trivial task, do not skip the sprint contract.
 
 ---
 
@@ -195,8 +107,9 @@ No non-trivial task should start without this.
 - [`../../claude-progress.md`](../../claude-progress.md) — current progress state
 - [`../../session-handoff.md`](../../session-handoff.md) — last session handover
 - [`../../feature_list.json`](../../feature_list.json) — machine-readable feature tracker
-- [`./worktree-sessions.md`](./worktree-sessions.md) — worktree creation and env file workflow
+- [`../context/worktrees.md`](../context/worktrees.md) — worktree conventions, branch naming, env-file rules
 - [`./orchestration.md`](./orchestration.md) — execution mode decision matrix
+- [`./planning.md`](./planning.md) — sprint contract format and planning steps
 
 ---
 

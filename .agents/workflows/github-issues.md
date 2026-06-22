@@ -158,7 +158,7 @@ Update `feature_list.json` when:
    harness/<short-description>
    ```
 
-3. Create a dedicated worktree for the branch. See [worktree-sessions.md](./worktree-sessions.md).
+3. Create a dedicated worktree for the branch. See [`../context/worktrees.md`](../context/worktrees.md).
 4. Copy required local env files safely (never stage them).
 5. Implement scoped changes.
 6. Run verification as much as possible (`{{LINT_CMD}}`, `{{TYPECHECK_CMD}}`, `{{TEST_CMD}}`).
@@ -233,13 +233,9 @@ gh pr status
 
 ---
 
-## Epic-Branch Sub-issue Closing & Ledger Sync
+## Epic-Branch Delivery
 
-When a sub-PR merges into an `epic/*` branch, GitHub does not auto-close the linked sub-issue — auto-close only fires on merges to the default branch. [`.github/workflows/epic-sync.yml`](../../.github/workflows/epic-sync.yml) fills this gap: it parses the merged PR body for standard closing keywords (`closes`, `fixes`, `resolves`, and their variants) and closes each referenced issue via the API, posting a comment linking the epic PR.
-
-`feature_list.json` is the system-of-record ledger for feature and task progress. Every task bound to a GH issue must set `github_issue` (and `epic` if the task belongs to an epic). Use [`scripts/sync-ledger.sh`](../../scripts/sync-ledger.sh) or [`/sync-ledger`](../../.claude/commands/sync-ledger.md) to detect and cautiously repair drift between the ledger and live issue state.
-
-Full model, rules, and sync cadence: [epic-delivery.md](epic-delivery.md).
+For the epic-branch model, sub-issue auto-closing, ledger sync (`feature_list.json`), and the full rules, see [`epic-delivery.md`](epic-delivery.md).
 
 ---
 

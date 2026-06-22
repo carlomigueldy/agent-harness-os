@@ -4,7 +4,7 @@ Project slash commands live in [`../../.claude/commands/`](../../.claude/command
 
 This file is the **index and authoring contract** for those commands. For project *skills*, see [`skills.md`](skills.md). For shell/CLI commands (install, build, test), see [`commands.md`](commands.md) — a different thing from slash commands.
 
-> **Namespace rule (important):** Claude Code registers **every** `.md` under `.claude/commands/` as a command. Do **not** put `AGENTS.md`, `README.md`, or any non-command `.md` inside that directory — it would register as a stray `/AGENTS` / `/README` command. That is why this index lives here in `.agents/context/` and the directory holds only real command files. `verify-harness.sh` enforces this.
+> **Namespace rule:** See [runtimes.md → Adapter & Namespace Rules](runtimes.md) for the full constraint. This index lives in `.agents/context/`, not inside `.claude/commands/`, to avoid stray command registration.
 
 > **Other runtimes:** In Claude Code, commands live in `.claude/commands/`. Other runtimes expose the same loops via their native invocation mechanism — see [`runtimes.md`](runtimes.md) for the full concept mapping.
 
